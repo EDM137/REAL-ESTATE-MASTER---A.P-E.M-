@@ -1,0 +1,9 @@
+{
+  "name": "Copy of Real Estate Master - A.P & E.M ",
+  "description": "A sovereign-grade command center for the entire real estate lifecycle. Built for agents, buyers, sellers, and specialty trades. Clause-enforced, MLS-integrated, and FortiFiled™. Orchestrated by an AI Copilot.\n",
+  "requestFramePermissions": [
+    "microphone",
+    "geolocation",
+    "camera"
+  ]
+}
