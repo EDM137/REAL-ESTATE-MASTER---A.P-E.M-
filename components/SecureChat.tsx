@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Listing } from '../types';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
-import { X, Shield, Camera, Mic, CheckCircle, FileText, User, Pause, Play } from './ui/Icons';
+import { X, Shield, Camera, Mic, CheckCircle, FileText, User, Pause, Play, Lock } from './ui/Icons';
 import AdBanner from './AdBanner';
 
 interface SecureChatProps {
@@ -16,14 +16,14 @@ const SecureChat: React.FC<SecureChatProps> = ({ listing, onListingUpdate, onClo
     const [isVideoMode, setIsVideoMode] = useState(false);
     const [showChecklist, setShowChecklist] = useState(false);
     const [isOnHold, setIsOnHold] = useState(false);
+    const [isEncrypted, setIsEncrypted] = useState(true);
     const videoRef = useRef<HTMLVideoElement>(null);
 
-    // Mock participants for the demo
+    // Mock participants for the 4-person grid (1 Local + 3 Remote)
     const participants = [
-        { name: 'Buyer (John)', role: 'Buyer', color: 'bg-blue-600' },
-        { name: 'Seller Agent (Alice)', role: 'Realtor', color: 'bg-purple-600' },
-        { name: 'Buyer Agent (Bob)', role: 'Realtor', color: 'bg-indigo-600' },
-        { name: 'Mediator/Contractor', role: '3rd Party', color: 'bg-orange-600' },
+        { name: 'Alice (Realtor)', role: 'Listing Agent', color: 'bg-purple-600' },
+        { name: 'John (Buyer)', role: 'Buyer', color: 'bg-blue-600' },
+        { name: 'Sarah (Mediator)', role: 'Mediator/Contractor', color: 'bg-orange-600' },
     ];
 
     useEffect(() => {
@@ -82,12 +82,23 @@ const SecureChat: React.FC<SecureChatProps> = ({ listing, onListingUpdate, onClo
         <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 animate-fade-in p-4">
             <Card className="w-full max-w-7xl flex flex-col h-[90vh] relative overflow-hidden">
                 <Card.Header className="flex justify-between items-center py-3 z-20 bg-brand-secondary/90 backdrop-blur">
-                    <div className="flex items-center gap-2">
-                        <Shield className="w-6 h-6 text-brand-green" />
-                        <div>
-                             <Card.Title>Secure Closing War Room</Card.Title>
-                             <Card.Description>MLS ID: {listing.id} | Multi-Party Encrypted Channel</Card.Description>
+                    <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2">
+                            <Shield className="w-6 h-6 text-brand-green" />
+                            <div>
+                                 <Card.Title>Secure Closing War Room</Card.Title>
+                                 <Card.Description>MLS ID: {listing.id} | Multi-Party</Card.Description>
+                            </div>
                         </div>
+                        {isVideoMode && (
+                            <div className="hidden md:flex items-center gap-2 px-3 py-1 bg-brand-primary rounded border border-brand-accent">
+                                <Lock className="w-3 h-3 text-brand-green" />
+                                <span className="text-xs text-brand-green font-mono">E2E ENCRYPTED</span>
+                                <span className="w-px h-3 bg-brand-light/30 mx-1"></span>
+                                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                                <span className="text-xs text-red-500 font-mono">REC</span>
+                            </div>
+                        )}
                     </div>
                     <div className="flex gap-2">
                         {isVideoMode && (
@@ -99,7 +110,7 @@ const SecureChat: React.FC<SecureChatProps> = ({ listing, onListingUpdate, onClo
                                     onClick={() => setIsOnHold(!isOnHold)}
                                 >
                                     {isOnHold ? <Play className="w-4 h-4 mr-2" /> : <Pause className="w-4 h-4 mr-2" />}
-                                    {isOnHold ? "Resume Call" : "Hold Call"}
+                                    {isOnHold ? "Resume" : "Hold"}
                                 </Button>
                                 <Button 
                                     size="sm" 
@@ -118,7 +129,7 @@ const SecureChat: React.FC<SecureChatProps> = ({ listing, onListingUpdate, onClo
                             onClick={() => { setIsVideoMode(!isVideoMode); setIsOnHold(false); }}
                          >
                             <Camera className="w-4 h-4 mr-2" />
-                            {isVideoMode ? 'End Conference' : 'Start Video Conference'}
+                            {isVideoMode ? 'End Call' : 'Start Video Call'}
                          </Button>
                         <Button size="icon" variant="outline" onClick={onClose}>
                             <X className="w-4 h-4" />
@@ -134,10 +145,10 @@ const SecureChat: React.FC<SecureChatProps> = ({ listing, onListingUpdate, onClo
                             </div>
                         ) : (
                             <div className="flex flex-1 gap-4 h-full overflow-hidden">
-                                {/* Video Grid */}
-                                <div className={`grid gap-4 w-full h-full transition-all duration-300 ${showChecklist ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-3'}`}>
+                                {/* Video Grid - 2x2 Layout for 4 participants */}
+                                <div className={`grid gap-4 w-full h-full transition-all duration-300 ${showChecklist ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-2'}`}>
                                     {/* Local User (Seller) */}
-                                    <div className={`relative w-full h-full bg-gray-900 rounded-lg overflow-hidden border-2 border-brand-blue shadow-lg ${showChecklist ? 'col-span-2 md:col-span-1' : ''}`}>
+                                    <div className="relative w-full h-full bg-gray-900 rounded-lg overflow-hidden border-2 border-brand-blue shadow-lg">
                                         <video ref={videoRef} autoPlay muted playsInline className="w-full h-full object-cover transform scale-x-[-1]" />
                                         <div className="absolute bottom-2 left-2 bg-black/50 px-2 py-1 rounded text-xs text-white">
                                             You (Seller)
@@ -155,7 +166,7 @@ const SecureChat: React.FC<SecureChatProps> = ({ listing, onListingUpdate, onClo
                                     <div className="w-80 flex-shrink-0 bg-brand-secondary rounded-lg border border-brand-accent p-4 overflow-y-auto animate-fade-in flex flex-col">
                                         <h3 className="font-bold text-brand-highlight mb-4 flex items-center gap-2">
                                             <CheckCircle className="w-5 h-5 text-brand-blue" />
-                                            Final Validations
+                                            Closing Checklist
                                         </h3>
                                         <div className="space-y-3 flex-grow">
                                             {listing.closingChecklist.map((item) => (

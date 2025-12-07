@@ -64,6 +64,10 @@ const AudioTranscriber: React.FC = () => {
                     onclose: () => {},
                 },
                 config: {
+                    responseModalities: [Modality.AUDIO],
+                    speechConfig: {
+                        voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } },
+                    },
                     inputAudioTranscription: {},
                 },
             });
@@ -104,7 +108,7 @@ const AudioTranscriber: React.FC = () => {
         if (mediaStreamRef.current) {
             mediaStreamRef.current.getTracks().forEach(track => track.stop());
         }
-        if (audioContextRef.current) {
+        if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
             audioContextRef.current.close();
         }
         if (scriptProcessorRef.current) {
