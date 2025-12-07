@@ -4,7 +4,7 @@ import { Listing, CustomField } from '../types';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
-import { Home, Camera, UploadCloud, Trash2, Plus, Sparkles, X, RefreshCw, MapPin, Database, CheckCircle, Search } from './ui/Icons';
+import { Home, Camera, UploadCloud, Trash2, Plus, Sparkles, X, RefreshCw, MapPin, Database, CheckCircle, Search, Star } from './ui/Icons';
 import { GoogleGenAI } from '@google/genai';
 
 interface ListingComposerProps {
@@ -364,7 +364,7 @@ const ListingComposer: React.FC<ListingComposerProps> = ({ listing, onListingUpd
 
                 {/* Media Gallery */}
                 <div>
-                    <h3 className="text-lg font-semibold mb-3 text-brand-light border-b border-brand-accent pb-2">Media Gallery</h3>
+                    <h3 className="text-lg font-semibold mb-3 text-brand-light border-b border-brand-accent pb-2">Property Photos & Visuals</h3>
                     <input type="file" accept="image/*" multiple ref={fileInputRef} onChange={handleFileChange} className="hidden" />
                     <input type="file" accept="image/*" ref={replaceInputRef} onChange={handleReplaceFileChange} className="hidden" />
                     
@@ -377,19 +377,26 @@ const ListingComposer: React.FC<ListingComposerProps> = ({ listing, onListingUpd
                         className={`w-full min-h-[150px] border-2 border-dashed rounded-lg p-6 text-center text-brand-light flex flex-col items-center justify-center gap-2 transition-colors duration-300 cursor-pointer ${isDragging ? 'border-brand-blue bg-brand-blue/10' : 'border-brand-accent hover:border-brand-light'}`}
                     >
                         <UploadCloud className="w-10 h-10 text-brand-accent" />
-                        <p className="font-semibold">Drop images or click to upload</p>
+                        <p className="font-semibold">Drop images here or click to upload</p>
+                        <p className="text-xs opacity-70">Supports JPG, PNG, WEBP</p>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
                         {listing.photos.map((photo, index) => (
                             <div 
                                 key={index} 
-                                className="relative group cursor-pointer"
+                                className="relative group cursor-pointer bg-black/20 rounded-lg"
                                 onClick={() => setPreviewImage(photo)}
                             >
                                 <img src={photo} alt={`Listing photo ${index + 1}`} className="w-full h-32 rounded-lg object-cover border border-brand-accent hover:border-brand-blue transition-colors" />
                                 
+                                {index === 0 && (
+                                    <div className="absolute top-2 left-2 bg-brand-yellow text-brand-primary text-xs font-bold px-2 py-1 rounded shadow-md z-10 flex items-center gap-1">
+                                        <Star className="w-3 h-3 fill-current" /> Cover
+                                    </div>
+                                )}
+                                
                                 {/* Overlay Controls */}
-                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 rounded-lg">
+                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 rounded-lg backdrop-blur-[2px]">
                                     <Button size="icon" variant="secondary" onClick={(e) => triggerReplace(index, e)} title="Replace Image">
                                         <RefreshCw className="w-4 h-4" />
                                     </Button>
@@ -407,9 +414,9 @@ const ListingComposer: React.FC<ListingComposerProps> = ({ listing, onListingUpd
             {previewImage && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 animate-fade-in" onClick={() => setPreviewImage(null)}>
                     <div className="relative max-w-4xl max-h-screen">
-                        <img src={previewImage} alt="Preview" className="max-w-full max-h-[90vh] rounded-lg" />
+                        <img src={previewImage} alt="Preview" className="max-w-full max-h-[90vh] rounded-lg border-2 border-brand-accent shadow-2xl" />
                         <button 
-                            className="absolute -top-10 right-0 text-white hover:text-brand-blue"
+                            className="absolute -top-10 right-0 text-white hover:text-brand-blue transition-colors"
                             onClick={() => setPreviewImage(null)}
                         >
                             <X className="w-8 h-8" />
