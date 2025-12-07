@@ -530,7 +530,20 @@ const DocumentVault: React.FC<DocumentVaultProps> = ({ listing, onListingUpdate 
               }
             : d
         );
-        onListingUpdate({ ...listing, documents: updatedDocs });
+        
+        // Add System Communication
+        const newComm = {
+             agentType: "System" as const,
+             message: `Signature request sent for document '${activeDoc.name}' to: ${requestableSigners.join(', ')}`,
+             timestamp: new Date().toLocaleString()
+        };
+
+        onListingUpdate({ 
+            ...listing, 
+            documents: updatedDocs, 
+            communications: [...listing.communications, newComm] 
+        });
+        
         setShowRequestModal(false);
         alert(`Signature requests sent securely to: ${requestableSigners.join(', ')}`);
     };
@@ -694,19 +707,28 @@ const DocumentVault: React.FC<DocumentVaultProps> = ({ listing, onListingUpdate 
                                 <Card.Description>Select parties required to sign this document.</Card.Description>
                             </Card.Header>
                             <Card.Content className="space-y-2">
-                                {['Seller', 'Buyer', 'Realtor', 'Inspector', 'Contractor'].map(role => (
-                                    <label key={role} className="flex items-center gap-3 p-3 bg-brand-primary rounded border border-brand-accent hover:border-brand-blue cursor-pointer">
-                                        <input 
-                                            type="checkbox"
-                                            checked={requestableSigners.includes(role)}
-                                            onChange={() => toggleRequestSigner(role)}
-                                            className="w-5 h-5 text-brand-blue rounded focus:ring-brand-blue bg-brand-secondary border-brand-light"
-                                        />
-                                        <span className="text-brand-highlight flex items-center gap-2">
-                                            <User className="w-4 h-4" /> {role}
-                                        </span>
-                                    </label>
-                                ))}
+                                {['Seller', 'Buyer', 'Realtor', 'Inspector', 'Contractor'].map(role => {
+                                    let label = role;
+                                    if (role === 'Seller') label = `Seller (${listing.sellerName})`;
+                                    if (role === 'Buyer') {
+                                        const accepted = listing.offers.find(o => o.status === 'Accepted');
+                                        label = accepted ? `Buyer (${accepted.buyerName})` : `Buyer (Pending)`;
+                                    }
+                                    
+                                    return (
+                                        <label key={role} className="flex items-center gap-3 p-3 bg-brand-primary rounded border border-brand-accent hover:border-brand-blue cursor-pointer">
+                                            <input 
+                                                type="checkbox"
+                                                checked={requestableSigners.includes(role)}
+                                                onChange={() => toggleRequestSigner(role)}
+                                                className="w-5 h-5 text-brand-blue rounded focus:ring-brand-blue bg-brand-secondary border-brand-light"
+                                            />
+                                            <span className="text-brand-highlight flex items-center gap-2">
+                                                <User className="w-4 h-4" /> {label}
+                                            </span>
+                                        </label>
+                                    );
+                                })}
                             </Card.Content>
                             <Card.Footer className="flex justify-end gap-2">
                                 <Button variant="outline" onClick={() => setShowRequestModal(false)}>Cancel</Button>
