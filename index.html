@@ -1,24 +1,35 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF--8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sovereign Real Estate Command Center</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --brand-primary: #0D1B2A;
+            --brand-secondary: #1B263B;
+            --brand-accent: #415A77;
+            --brand-light: #778DA9;
+            --brand-highlight: #E0E1DD;
+            --brand-blue: #3B82F6;
+            --brand-green: #10B981;
+            --brand-yellow: #F59E0B;
+        }
+    </style>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        'brand-primary': '#0D1B2A',
-                        'brand-secondary': '#1B263B',
-                        'brand-accent': '#415A77',
-                        'brand-light': '#778DA9',
-                        'brand-highlight': '#E0E1DD',
-                        'brand-blue': '#3B82F6',
-                        'brand-green': '#10B981',
-                        'brand-yellow': '#F59E0B',
+                        'brand-primary': 'var(--brand-primary)',
+                        'brand-secondary': 'var(--brand-secondary)',
+                        'brand-accent': 'var(--brand-accent)',
+                        'brand-light': 'var(--brand-light)',
+                        'brand-highlight': 'var(--brand-highlight)',
+                        'brand-blue': 'var(--brand-blue)',
+                        'brand-green': 'var(--brand-green)',
+                        'brand-yellow': 'var(--brand-yellow)',
                     },
                     animation: {
                         'fade-in': 'fadeIn 0.5s ease-in-out',

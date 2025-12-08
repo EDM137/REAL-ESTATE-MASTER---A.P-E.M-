@@ -1,6 +1,6 @@
 {
   "name": "Copy of Real Estate Master - A.P & E.M ",
-  "description": "A sovereign-grade command center for the entire real estate lifecycle. Built for agents, buyers, sellers, and specialty trades. Clause-enforced, MLS-integrated, and FortiFiled™. Orchestrated by an AI Copilot.\n",
+  "description": "A sovereign-grade command center for the entire real estate lifecycle. Built for agents, buyers, sellers, and specialty trades. Clause-enforced, MLS-integrated, and FortiFiled™. Orchestrated by an AI Copilot. All functions and features in this application are property and IP of Eric Daniel Malley, owner of Radest Publishing Co.",
   "requestFramePermissions": [
     "microphone",
     "geolocation",

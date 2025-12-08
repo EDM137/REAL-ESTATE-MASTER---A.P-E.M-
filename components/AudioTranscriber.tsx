@@ -12,6 +12,7 @@ type LiveSession = {
 const AudioTranscriber: React.FC = () => {
     const [isRecording, setIsRecording] = useState(false);
     const [transcription, setTranscription] = useState('');
+    const [translation, setTranslation] = useState('');
     const [error, setError] = useState('');
     const [ai, setAi] = useState<GoogleGenAI | null>(null);
     const sessionPromiseRef = useRef<Promise<LiveSession> | null>(null);
@@ -19,6 +20,7 @@ const AudioTranscriber: React.FC = () => {
     const audioContextRef = useRef<AudioContext | null>(null);
     const scriptProcessorRef = useRef<ScriptProcessorNode | null>(null);
     const finalTranscriptionRef = useRef('');
+    const finalTranslationRef = useRef('');
 
     useEffect(() => {
         if (process.env.API_KEY) {
@@ -33,7 +35,9 @@ const AudioTranscriber: React.FC = () => {
         }
         setError('');
         setTranscription('');
+        setTranslation('');
         finalTranscriptionRef.current = '';
+        finalTranslationRef.current = '';
 
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -47,13 +51,25 @@ const AudioTranscriber: React.FC = () => {
                 callbacks: {
                     onopen: () => {},
                     onmessage: (message: LiveServerMessage) => {
-                        const transcript = message.serverContent?.inputTranscription;
-                        if (transcript) {
-                            if (transcript.isFinal) {
-                                finalTranscriptionRef.current += transcript.text + ' ';
+                        // Handle Input Transcription (Source Language)
+                        const inputTranscript = message.serverContent?.inputTranscription;
+                        if (inputTranscript) {
+                            if (inputTranscript.isFinal) {
+                                finalTranscriptionRef.current += inputTranscript.text + ' ';
                                 setTranscription(finalTranscriptionRef.current);
                             } else {
-                                setTranscription(finalTranscriptionRef.current + transcript.text);
+                                setTranscription(finalTranscriptionRef.current + inputTranscript.text);
+                            }
+                        }
+
+                        // Handle Output Transcription (English Translation)
+                        const outputTranscript = message.serverContent?.outputTranscription;
+                        if (outputTranscript) {
+                             if (outputTranscript.isFinal) {
+                                finalTranslationRef.current += outputTranscript.text + ' ';
+                                setTranslation(finalTranslationRef.current);
+                            } else {
+                                setTranslation(finalTranslationRef.current + outputTranscript.text);
                             }
                         }
                     },
@@ -69,6 +85,8 @@ const AudioTranscriber: React.FC = () => {
                         voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } },
                     },
                     inputAudioTranscription: {},
+                    outputAudioTranscription: {},
+                    systemInstruction: "You are a professional interpreter. Listen to the input audio. Detect the language. Translate it immediately into English. If the input is in English, repeat it exactly. Output the English translation.",
                 },
             });
             
@@ -136,11 +154,19 @@ const AudioTranscriber: React.FC = () => {
                 disabled={!ai}
             >
                 <Mic className={`w-5 h-5 mr-2 ${isRecording ? 'animate-pulse' : ''}`} />
-                {isRecording ? 'Stop Transcribing' : 'Start Transcribing'}
+                {isRecording ? 'Stop Translating' : 'Start Live Translator'}
             </Button>
             
-            <div className="p-3 bg-brand-secondary rounded-lg min-h-[100px] text-left text-sm">
-                {transcription || <span className="text-brand-light">Transcription will appear here...</span>}
+            <div className="space-y-2">
+                <div className="p-3 bg-brand-secondary rounded-lg min-h-[60px] text-left text-sm">
+                    <span className="text-xs text-brand-light block mb-1 uppercase tracking-wide">Detected Speech (Source):</span>
+                    {transcription || <span className="text-brand-light italic opacity-50">Listening...</span>}
+                </div>
+                
+                <div className="p-3 bg-brand-blue/10 border border-brand-blue/30 rounded-lg min-h-[60px] text-left text-sm">
+                     <span className="text-xs text-brand-blue block mb-1 uppercase tracking-wide">English Translation:</span>
+                    {translation || <span className="text-brand-blue/50 italic">Translation will appear here...</span>}
+                </div>
             </div>
             
             {error && <p className="text-sm text-red-400 bg-red-500/10 p-2 rounded-md">{error}</p>}

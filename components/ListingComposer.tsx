@@ -4,7 +4,7 @@ import { Listing, CustomField } from '../types';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
-import { Home, Camera, UploadCloud, Trash2, Plus, Sparkles, X, RefreshCw, MapPin, Database, CheckCircle, Search, Star } from './ui/Icons';
+import { Home, Camera, UploadCloud, Trash2, Plus, Sparkles, X, RefreshCw, MapPin, Database } from './ui/Icons';
 import { GoogleGenAI } from '@google/genai';
 
 interface ListingComposerProps {
@@ -20,7 +20,6 @@ const ListingComposer: React.FC<ListingComposerProps> = ({ listing, onListingUpd
     const [previewImage, setPreviewImage] = useState<string | null>(null);
     const [draftSaved, setDraftSaved] = useState(false);
     const [isAutoFilling, setIsAutoFilling] = useState(false);
-    const [showLocationConfirm, setShowLocationConfirm] = useState(false);
     
     // AI State
     const [isEnhancing, setIsEnhancing] = useState(false);
@@ -47,41 +46,26 @@ const ListingComposer: React.FC<ListingComposerProps> = ({ listing, onListingUpd
     };
 
     // --- Smart Auto-Fill Logic ---
-    const initiateAutoFill = () => {
+    const handleAutoFill = () => {
         if (!listing.address) {
             alert("Please enter an address first.");
             return;
         }
         setIsAutoFilling(true);
-        // Simulate "Locating"
+        // Simulate API call to Maps/Property Data
         setTimeout(() => {
-            setShowLocationConfirm(true);
+            onListingUpdate({
+                ...listing,
+                customFields: [
+                    ...listing.customFields,
+                    { id: `cf-auto-1`, key: 'Year Built', value: '1965' },
+                    { id: `cf-auto-2`, key: 'Sq Ft', value: '2,500' },
+                    { id: `cf-auto-3`, key: 'Lot Size', value: '0.25 Acres' }
+                ]
+            });
             setIsAutoFilling(false);
-        }, 1000);
-    };
-
-    const confirmAutoFill = () => {
-        // Apply "Online Data"
-        const simulatedData = {
-            bedrooms: 4,
-            bathrooms: 3,
-            squareFootage: 2650,
-            yearBuilt: 1988,
-            lotSize: '0.35 Acres',
-            price: 825000, // Estimate
-            description: `Stunning 4-bedroom property located at ${listing.address}. Featuring 3 bathrooms and over 2,600 sq ft of living space. Built in 1988, this home sits on a generous 0.35-acre lot. Perfect for families.`
-        };
-
-        onListingUpdate({
-            ...listing,
-            ...simulatedData,
-            customFields: [
-                ...listing.customFields,
-                { id: `cf-auto-1`, key: 'Zoning', value: 'Residential' },
-            ]
-        });
-        setShowLocationConfirm(false);
-        setDraftSaved(false);
+            setDraftSaved(false);
+        }, 1500);
     };
 
     // --- AI Enhance Logic ---
@@ -216,31 +200,6 @@ const ListingComposer: React.FC<ListingComposerProps> = ({ listing, onListingUpd
 
     return (
         <Card className="animate-fade-in relative">
-            {/* Location Confirmation Modal */}
-            {showLocationConfirm && (
-                <div className="absolute inset-0 z-20 bg-black/80 flex items-center justify-center p-6 rounded-lg">
-                    <div className="bg-brand-secondary p-6 rounded-lg border border-brand-blue shadow-2xl max-w-md w-full animate-fade-in">
-                        <h3 className="text-xl font-bold text-brand-highlight mb-2 flex items-center gap-2">
-                            <MapPin className="w-6 h-6 text-brand-blue" /> Confirm Location
-                        </h3>
-                        <div className="aspect-video bg-gray-700 rounded mb-4 flex items-center justify-center border border-brand-accent">
-                            <span className="text-brand-light text-sm">Simulated Map View of {listing.address}</span>
-                        </div>
-                        <p className="text-brand-light mb-4 text-sm">
-                            We found property records for this address. 
-                            <br/><br/>
-                            <strong>Data Found:</strong> 4 Beds, 3 Baths, 2,650 SqFt, Built 1988.
-                            <br/><br/>
-                            Would you like to auto-populate the listing details?
-                        </p>
-                        <div className="flex gap-4">
-                            <Button variant="outline" className="flex-1" onClick={() => setShowLocationConfirm(false)}>Cancel</Button>
-                            <Button className="flex-1" onClick={confirmAutoFill}>Yes, Apply Data</Button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
             <Card.Header>
                 <div className="flex justify-between items-start">
                     <div className="flex items-center gap-3">
@@ -260,55 +219,33 @@ const ListingComposer: React.FC<ListingComposerProps> = ({ listing, onListingUpd
                 </div>
             </Card.Header>
             <Card.Content className="space-y-6">
-                
-                {/* Property Identification Section */}
-                <div className="bg-brand-secondary/30 p-4 rounded-lg border border-brand-accent">
-                    <h3 className="text-sm font-bold text-brand-blue uppercase tracking-wider mb-3 flex items-center gap-2">
-                        <Search className="w-4 h-4" /> Step 1: Property Identification
-                    </h3>
-                    <div className="flex items-end gap-2">
-                        <Input 
-                            label="Property Address" 
-                            name="address" 
-                            value={listing.address} 
-                            onChange={handleInputChange} 
-                            className="flex-grow" 
-                            placeholder="Enter street address to locate..."
-                        />
-                        <Button 
-                            onClick={initiateAutoFill} 
-                            disabled={isAutoFilling || !listing.address}
-                            className="mb-[2px] whitespace-nowrap bg-brand-blue min-w-[140px]"
-                            title="Locate and Auto-populate details"
-                        >
-                            {isAutoFilling ? (
-                                <span className="flex items-center gap-2"><div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin"></div> Locating...</span>
-                            ) : (
-                                <span className="flex items-center gap-2"><Database className="w-4 h-4" /> Locate & Fill</span>
-                            )}
-                        </Button>
-                    </div>
-                </div>
-
-                {/* Property Details Grid */}
                 <div>
-                    <h3 className="text-lg font-semibold mb-3 text-brand-light border-b border-brand-accent pb-2">Property Specifications</h3>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                    <h3 className="text-lg font-semibold mb-3 text-brand-light border-b border-brand-accent pb-2">Property Details</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                        <div className="md:col-span-2 flex items-end gap-2">
+                            <Input label="Property Address" name="address" value={listing.address} onChange={handleInputChange} className="flex-grow" />
+                            <Button 
+                                onClick={handleAutoFill} 
+                                disabled={isAutoFilling || !listing.address}
+                                className="mb-[2px] whitespace-nowrap bg-brand-blue"
+                                title="Auto-populate details from Map Data"
+                            >
+                                {isAutoFilling ? (
+                                    <span className="flex items-center gap-2"><div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin"></div> Fetching...</span>
+                                ) : (
+                                    <span className="flex items-center gap-2"><MapPin className="w-4 h-4" /> Smart Auto-Fill</span>
+                                )}
+                            </Button>
+                        </div>
                         <Input label="Listing Price" name="price" type="number" value={listing.price} onChange={handleInputChange} />
-                        <Input label="Bedrooms" name="bedrooms" type="number" value={listing.bedrooms || ''} onChange={handleInputChange} placeholder="#" />
-                        <Input label="Bathrooms" name="bathrooms" type="number" step="0.5" value={listing.bathrooms || ''} onChange={handleInputChange} placeholder="#" />
-                        <Input label="Sq. Footage" name="squareFootage" type="number" value={listing.squareFootage || ''} onChange={handleInputChange} placeholder="ft²" />
-                        <Input label="Year Built" name="yearBuilt" type="number" value={listing.yearBuilt || ''} onChange={handleInputChange} placeholder="YYYY" />
-                        <Input label="Lot Size" name="lotSize" value={listing.lotSize || ''} onChange={handleInputChange} placeholder="Acres/SqFt" />
-                        <div className="col-span-2">
+                        <div className="md:col-span-1">
                              <label className="block text-sm font-medium text-brand-light mb-1">Status</label>
                              <div className="p-2 bg-brand-primary border border-brand-accent rounded-md text-brand-light opacity-70">
                                  {listing.status}
                              </div>
                         </div>
                     </div>
-
-                    <div className="relative">
+                    <div className="mt-4 relative">
                         <div className="flex justify-between items-center mb-1">
                             <label className="block text-sm font-medium text-brand-light">Property Description</label>
                             <Button 
@@ -325,13 +262,15 @@ const ListingComposer: React.FC<ListingComposerProps> = ({ listing, onListingUpd
                             </Button>
                         </div>
                         <textarea name="description" value={listing.description} onChange={handleInputChange} rows={6} className="w-full bg-brand-primary border border-brand-accent rounded-md p-2 text-brand-highlight focus:ring-2 focus:ring-brand-blue" />
+                        <p className="text-xs text-brand-light mt-1">
+                            Tip: Write a rough draft and use <strong>Magic Enhance</strong> to auto-expand on architecture, renovations, and schools.
+                        </p>
                     </div>
                 </div>
 
-                {/* Custom Fields */}
                 <div>
                      <div className="flex justify-between items-center mb-3 border-b border-brand-accent pb-2">
-                        <h3 className="text-lg font-semibold text-brand-light">Additional Fields</h3>
+                        <h3 className="text-lg font-semibold text-brand-light">Custom Fields</h3>
                         <Button size="sm" variant="outline" onClick={handleAddField}>
                             <Plus className="w-3 h-3 mr-1" /> Add Field
                         </Button>
@@ -362,9 +301,8 @@ const ListingComposer: React.FC<ListingComposerProps> = ({ listing, onListingUpd
                     </div>
                 </div>
 
-                {/* Media Gallery */}
                 <div>
-                    <h3 className="text-lg font-semibold mb-3 text-brand-light border-b border-brand-accent pb-2">Property Photos & Visuals</h3>
+                    <h3 className="text-lg font-semibold mb-3 text-brand-light border-b border-brand-accent pb-2">Media Gallery</h3>
                     <input type="file" accept="image/*" multiple ref={fileInputRef} onChange={handleFileChange} className="hidden" />
                     <input type="file" accept="image/*" ref={replaceInputRef} onChange={handleReplaceFileChange} className="hidden" />
                     
@@ -377,26 +315,19 @@ const ListingComposer: React.FC<ListingComposerProps> = ({ listing, onListingUpd
                         className={`w-full min-h-[150px] border-2 border-dashed rounded-lg p-6 text-center text-brand-light flex flex-col items-center justify-center gap-2 transition-colors duration-300 cursor-pointer ${isDragging ? 'border-brand-blue bg-brand-blue/10' : 'border-brand-accent hover:border-brand-light'}`}
                     >
                         <UploadCloud className="w-10 h-10 text-brand-accent" />
-                        <p className="font-semibold">Drop images here or click to upload</p>
-                        <p className="text-xs opacity-70">Supports JPG, PNG, WEBP</p>
+                        <p className="font-semibold">Drop images or click to upload</p>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
                         {listing.photos.map((photo, index) => (
                             <div 
                                 key={index} 
-                                className="relative group cursor-pointer bg-black/20 rounded-lg"
+                                className="relative group cursor-pointer"
                                 onClick={() => setPreviewImage(photo)}
                             >
                                 <img src={photo} alt={`Listing photo ${index + 1}`} className="w-full h-32 rounded-lg object-cover border border-brand-accent hover:border-brand-blue transition-colors" />
                                 
-                                {index === 0 && (
-                                    <div className="absolute top-2 left-2 bg-brand-yellow text-brand-primary text-xs font-bold px-2 py-1 rounded shadow-md z-10 flex items-center gap-1">
-                                        <Star className="w-3 h-3 fill-current" /> Cover
-                                    </div>
-                                )}
-                                
                                 {/* Overlay Controls */}
-                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 rounded-lg backdrop-blur-[2px]">
+                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 rounded-lg">
                                     <Button size="icon" variant="secondary" onClick={(e) => triggerReplace(index, e)} title="Replace Image">
                                         <RefreshCw className="w-4 h-4" />
                                     </Button>
@@ -414,9 +345,9 @@ const ListingComposer: React.FC<ListingComposerProps> = ({ listing, onListingUpd
             {previewImage && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 animate-fade-in" onClick={() => setPreviewImage(null)}>
                     <div className="relative max-w-4xl max-h-screen">
-                        <img src={previewImage} alt="Preview" className="max-w-full max-h-[90vh] rounded-lg border-2 border-brand-accent shadow-2xl" />
+                        <img src={previewImage} alt="Preview" className="max-w-full max-h-[90vh] rounded-lg" />
                         <button 
-                            className="absolute -top-10 right-0 text-white hover:text-brand-blue transition-colors"
+                            className="absolute -top-10 right-0 text-white hover:text-brand-blue"
                             onClick={() => setPreviewImage(null)}
                         >
                             <X className="w-8 h-8" />

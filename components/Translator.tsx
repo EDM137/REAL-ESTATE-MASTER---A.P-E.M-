@@ -4,7 +4,7 @@ import { Languages } from './ui/Icons';
 import { GoogleGenAI } from '@google/genai';
 
 const languages = [
-    "Spanish", "French", "German", "Japanese", "Mandarin", "Russian", "Arabic"
+    "Spanish", "French", "German", "Japanese", "Mandarin", "Russian", "Arabic", "Vietnamese"
 ];
 
 const Translator: React.FC = () => {

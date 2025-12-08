@@ -1,103 +1,169 @@
 
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Listing } from '../types';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
-import { Map, Plus, Trash2, Download } from './ui/Icons';
+import { UploadCloud, Save, Trash2, PenTool, MousePointer } from './ui/Icons';
+import { fileToDataUrl } from '../utils/file';
 
 interface PlotPlanEditorProps {
     listing: Listing;
+    onListingUpdate: (listing: Listing) => void;
 }
 
-const PlotPlanEditor: React.FC<PlotPlanEditorProps> = ({ listing }) => {
+const PlotPlanEditor: React.FC<PlotPlanEditorProps> = ({ listing, onListingUpdate }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [structures, setStructures] = useState<{id: string, x: number, y: number, w: number, h: number, label: string}[]>([]);
+    const [isDrawing, setIsDrawing] = useState(false);
+    const [tool, setTool] = useState<'pen' | 'select'>('pen');
+    const [image, setImage] = useState<HTMLImageElement | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
+        if (listing.plotPlan) {
+            const img = new Image();
+            img.src = listing.plotPlan;
+            img.onload = () => {
+                setImage(img);
+                drawImage(img);
+            };
+        }
+    }, []);
+
+    const drawImage = (img: HTMLImageElement) => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        
+        // Resize canvas to match image aspect ratio, max width container
+        const parent = canvas.parentElement;
+        if(parent) {
+             canvas.width = parent.clientWidth;
+             const scale = canvas.width / img.width;
+             canvas.height = img.height * scale;
+             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        }
+    };
+
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            try {
+                const base64 = await fileToDataUrl(e.target.files[0]);
+                const img = new Image();
+                img.src = base64;
+                img.onload = () => {
+                    setImage(img);
+                    drawImage(img);
+                    // Save initial state
+                    onListingUpdate({ ...listing, plotPlan: base64 });
+                };
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    };
+
+    const startDrawing = (e: React.MouseEvent | React.TouchEvent) => {
+        if (tool !== 'pen' || !image) return;
+        setIsDrawing(true);
         const canvas = canvasRef.current;
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
-        // Clear and draw grid
-        ctx.fillStyle = '#1e293b'; // Dark background
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        ctx.strokeStyle = '#334155';
-        ctx.lineWidth = 1;
-        for(let x=0; x<=canvas.width; x+=20) {
-            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
-        }
-        for(let y=0; y<=canvas.height; y+=20) {
-            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
-        }
+        const rect = canvas.getBoundingClientRect();
+        const x = ('touches' in e ? e.touches[0].clientX : e.clientX) - rect.left;
+        const y = ('touches' in e ? e.touches[0].clientY : e.clientY) - rect.top;
 
-        // Draw Structures
-        structures.forEach(s => {
-            ctx.fillStyle = '#3b82f6';
-            ctx.fillRect(s.x, s.y, s.w, s.h);
-            ctx.strokeStyle = '#60a5fa';
-            ctx.strokeRect(s.x, s.y, s.w, s.h);
-            ctx.fillStyle = '#ffffff';
-            ctx.font = '12px sans-serif';
-            ctx.fillText(s.label, s.x + 5, s.y + 15);
-        });
-
-    }, [structures]);
-
-    const addStructure = () => {
-        setStructures([...structures, {
-            id: `s-${Date.now()}`,
-            x: 50 + Math.random() * 100,
-            y: 50 + Math.random() * 100,
-            w: 100,
-            h: 80,
-            label: 'Main House'
-        }]);
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.strokeStyle = 'red';
+        ctx.lineWidth = 3;
     };
 
-    const clearCanvas = () => setStructures([]);
+    const draw = (e: React.MouseEvent | React.TouchEvent) => {
+        if (!isDrawing || tool !== 'pen') return;
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const x = ('touches' in e ? e.touches[0].clientX : e.clientX) - rect.left;
+        const y = ('touches' in e ? e.touches[0].clientY : e.clientY) - rect.top;
+
+        ctx.lineTo(x, y);
+        ctx.stroke();
+    };
+
+    const stopDrawing = () => {
+        if(isDrawing) {
+            setIsDrawing(false);
+            saveCanvas();
+        }
+    };
+
+    const saveCanvas = () => {
+        if(canvasRef.current) {
+            const dataUrl = canvasRef.current.toDataURL();
+            onListingUpdate({ ...listing, plotPlan: dataUrl });
+        }
+    };
+
+    const clearCanvas = () => {
+        if(image) {
+            drawImage(image);
+            saveCanvas();
+        }
+    };
 
     return (
-        <Card className="animate-fade-in h-full flex flex-col">
+        <Card className="animate-fade-in">
             <Card.Header>
-                <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                        <Map className="w-6 h-6 text-brand-blue" />
-                        <div>
-                            <Card.Title>Plot Plan Editor</Card.Title>
-                            <Card.Description>Site Layout for {listing.address}</Card.Description>
-                        </div>
-                    </div>
-                    <div className="flex gap-2">
-                        <Button size="sm" variant="outline" onClick={clearCanvas}>
-                            <Trash2 className="w-4 h-4 mr-2" /> Clear
-                        </Button>
-                        <Button size="sm" onClick={addStructure}>
-                            <Plus className="w-4 h-4 mr-2" /> Add Structure
-                        </Button>
-                    </div>
-                </div>
+                <Card.Title>Plot Plan & Design</Card.Title>
+                <Card.Description>Visualize property layout and landscaping.</Card.Description>
             </Card.Header>
-            <Card.Content className="flex-grow p-0 relative min-h-[500px] bg-brand-secondary">
-                 <canvas 
-                    ref={canvasRef} 
-                    width={800} 
-                    height={500} 
-                    className="w-full h-full object-contain cursor-crosshair"
-                />
-                {structures.length === 0 && (
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <p className="text-brand-light">Canvas Ready. Add structures to begin.</p>
+            <Card.Content>
+                <div className="flex gap-4 mb-4">
+                    <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
+                        <UploadCloud className="w-4 h-4 mr-2" /> Upload Plan
+                    </Button>
+                    <input type="file" ref={fileInputRef} onChange={handleFileUpload} className="hidden" accept="image/*" />
+                    
+                    <div className="bg-brand-secondary p-1 rounded border border-brand-accent flex gap-1">
+                        <Button size="sm" variant={tool === 'select' ? 'primary' : 'outline'} onClick={() => setTool('select')}>
+                            <MousePointer className="w-4 h-4" />
+                        </Button>
+                        <Button size="sm" variant={tool === 'pen' ? 'primary' : 'outline'} onClick={() => setTool('pen')}>
+                            <PenTool className="w-4 h-4" />
+                        </Button>
                     </div>
-                )}
+
+                    <Button variant="destructive" size="sm" onClick={clearCanvas} disabled={!image}>
+                        <Trash2 className="w-4 h-4 mr-2" /> Clear Annotations
+                    </Button>
+                </div>
+
+                <div className="bg-gray-100 rounded-lg overflow-hidden border border-brand-accent relative min-h-[400px] flex items-center justify-center">
+                    {!image && (
+                        <div className="text-center text-gray-500">
+                            <p>No plot plan loaded.</p>
+                            <p className="text-sm">Upload an image to start designing.</p>
+                        </div>
+                    )}
+                    <canvas
+                        ref={canvasRef}
+                        className={`max-w-full ${image ? 'cursor-crosshair' : ''}`}
+                        onMouseDown={startDrawing}
+                        onMouseMove={draw}
+                        onMouseUp={stopDrawing}
+                        onMouseLeave={stopDrawing}
+                        onTouchStart={startDrawing}
+                        onTouchMove={draw}
+                        onTouchEnd={stopDrawing}
+                    />
+                </div>
             </Card.Content>
-             <Card.Footer className="flex justify-between items-center">
-                <p className="text-xs text-brand-light">Drag functionality coming in v2.0</p>
-                <Button size="sm" variant="outline">
-                    <Download className="w-4 h-4 mr-2" /> Export Plan
-                </Button>
-            </Card.Footer>
         </Card>
     );
 };

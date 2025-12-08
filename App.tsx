@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Listing, RealEstateStatus, Lead } from './types';
+import { Listing, RealEstateStatus } from './types';
 import WorkflowStepper from './components/WorkflowStepper';
 import AiCopilot from './components/AiCopilot';
 import TermsModal from './components/TermsModal';
@@ -31,15 +31,11 @@ const mockListing: Listing = {
     photos: [],
     customFields: [
         { id: 'cf1', key: 'Zoning', value: 'R1' },
+        { id: 'cf2', key: 'Year Built', value: '1965' }
     ],
-    bedrooms: 3,
-    bathrooms: 2,
-    squareFootage: 2100,
-    yearBuilt: 1965,
-    lotSize: '0.25 Acres',
     roomSpecs: [
-        { id: 'room1', roomName: 'Living Room', ceilingHeight: 10, windowCount: 4, sunlightExposure: 'High', orientation: 'South', materials: 'Hardwood floors, plaster walls', notes: 'Features a large fireplace and built-in shelving.', photos: [], floorPlanImage: '' },
-        { id: 'room2', roomName: 'Kitchen', ceilingHeight: 9, windowCount: 2, sunlightExposure: 'Medium', orientation: 'West', materials: 'Quartz countertops, stainless steel appliances', notes: 'Newly renovated in 2023. Gas range.', photos: [], floorPlanImage: '' },
+        { id: 'room1', roomName: 'Living Room', ceilingHeight: 10, windowCount: 4, sunlightExposure: 'High', orientation: 'South', materials: 'Hardwood floors, plaster walls', notes: 'Features a large fireplace and built-in shelving.', photos: [], floorPlanImage: undefined },
+        { id: 'room2', roomName: 'Kitchen', ceilingHeight: 9, windowCount: 2, sunlightExposure: 'Medium', orientation: 'West', materials: 'Quartz countertops, stainless steel appliances', notes: 'Newly renovated in 2023. Gas range.', photos: [], floorPlanImage: undefined },
     ],
     offers: [
         { 
@@ -152,39 +148,6 @@ const App: React.FC = () => {
         setListing(updatedListing);
     };
 
-    // New: Handle Converting a Lead to a Listing
-    const handleConvertLead = (lead: Lead) => {
-        // Simulate "Taking all information available online"
-        // In a real app, this would hit a Property Data API
-        const onlinePropertyData = {
-            bedrooms: 4,
-            bathrooms: 3,
-            squareFootage: 2850,
-            yearBuilt: 1992,
-            lotSize: '0.45 Acres',
-            description: `Beautiful property at ${lead.address}. Automatically populated from public records. Ready for customization.`,
-            price: lead.estimatedValue || 0,
-            sellerName: lead.fullName,
-            sellerEmail: lead.email,
-            sellerPhone: lead.phone
-        };
-
-        const newListing: Listing = {
-            ...listing, // Keep existing structure/configs
-            ...onlinePropertyData,
-            address: lead.address,
-            id: `MLS-${Date.now()}`, // Generate new ID
-            photos: [], // Clear photos for new listing
-            roomSpecs: [], // Clear rooms
-            offers: [], // Clear offers
-        };
-
-        setListing(newListing);
-        setActiveStep(RealEstateStatus.LISTING); // Switch to composer
-        // Optional: Show a toast/notification here
-        alert(`Lead Converted! Portfolio for ${lead.fullName} created. Public data auto-filled.`);
-    };
-
     const renderActiveStepComponent = () => {
         switch (activeStep) {
             case RealEstateStatus.LISTING:
@@ -200,7 +163,7 @@ const App: React.FC = () => {
             case RealEstateStatus.OFFERS:
                 return <OfferEngine listing={listing} onListingUpdate={handleListingUpdate} />;
             case RealEstateStatus.BANKER:
-                return <SovereignBanker listing={listing} onConvertLead={handleConvertLead} />;
+                return <SovereignBanker listing={listing} />;
             case RealEstateStatus.ESCROW:
                  return <EscrowDashboard listing={listing} />;
             case RealEstateStatus.DOCUMENTS:
@@ -210,7 +173,7 @@ const App: React.FC = () => {
             case RealEstateStatus.CLOSED:
                 return <ClosingDashboard listing={listing} />;
             case RealEstateStatus.PLOT_PLAN:
-                return <PlotPlanEditor listing={listing} />;
+                return <PlotPlanEditor listing={listing} onListingUpdate={handleListingUpdate} />;
             default:
                 return (
                     <div className="bg-brand-secondary p-8 rounded-lg animate-fade-in flex flex-col items-center justify-center h-full text-center">
@@ -266,7 +229,7 @@ const App: React.FC = () => {
             </main>
             
             <footer className="text-center p-4 border-t border-brand-accent text-xs text-brand-light">
-                &copy; 2024 SovereignRE Command Center by Eric Daniel Malley & Radest Publishing Co. All Rights Reserved.
+                &copy; 2024 SovereignRE Command Center. All functions and features in this application are property and IP of Eric Daniel Malley, owner of Radest Publishing Co. All Rights Reserved.
             </footer>
         </div>
     );

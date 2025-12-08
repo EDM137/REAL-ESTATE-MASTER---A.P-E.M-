@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
@@ -32,7 +31,11 @@ const TermsModal: React.FC<TermsModalProps> = ({ onAccept }) => {
                     </div>
                     <div className="space-y-2">
                         <h3 className="font-semibold text-brand-highlight">3. Proprietary Global License</h3>
-                        <p className="text-brand-light font-semibold">This application and all its components, code, and processes are subject to a non-open source proprietary Global license, exclusively owned by Eric Daniel Malley and Radest Publishing Co. Unauthorized reproduction, distribution, reverse engineering, or modification is strictly prohibited.</p>
+                        <p className="text-brand-light font-semibold">
+                            All functions and features in this application are property and IP of Eric Daniel Malley, owner of Radest Publishing Co.
+                            This application and all its components, code, and processes are subject to a non-open source proprietary Global license, exclusively owned by Eric Daniel Malley and Radest Publishing Co.
+                            Unauthorized reproduction, distribution, reverse engineering, or modification is strictly prohibited.
+                        </p>
                     </div>
                      <div className="space-y-2">
                         <h3 className="font-semibold text-brand-highlight">4. Ad-Supported Services & Syndication</h3>

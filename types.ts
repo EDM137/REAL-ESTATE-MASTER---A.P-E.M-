@@ -11,7 +11,7 @@ export enum RealEstateStatus {
     DOCUMENTS = 'Document Vault',
     LIFECYCLE = 'Service Lifecycle',
     CLOSED = 'Closed',
-    PLOT_PLAN = 'Plot Plan Editor',
+    PLOT_PLAN = 'Plot Plan & Design',
 }
 
 export interface RoomSpec {
@@ -24,7 +24,7 @@ export interface RoomSpec {
     materials: string;
     notes: string;
     photos?: string[];
-    floorPlanImage?: string;
+    floorPlanImage?: string; // Base64 image of the room's specific floor plan
 }
 
 export interface Offer {
@@ -132,13 +132,7 @@ export interface Listing {
     appointments: Appointment[];
     closingChecklist: ClosingChecklistItem[];
     leads?: Lead[]; // Optional lead list for the banker view
-    
-    // Detailed Property Specs for Auto-Fill
-    bedrooms?: number;
-    bathrooms?: number;
-    squareFootage?: number;
-    lotSize?: string;
-    yearBuilt?: number;
+    plotPlan?: string; // Base64 image of the overall plot plan
 }
 
 export interface ChatMessage {
