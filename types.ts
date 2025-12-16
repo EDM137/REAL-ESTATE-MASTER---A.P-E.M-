@@ -12,6 +12,7 @@ export enum RealEstateStatus {
     LIFECYCLE = 'Service Lifecycle',
     CLOSED = 'Closed',
     PLOT_PLAN = 'Plot Plan & Design',
+    PET_TRACKER = 'Pet & IoT Monitor',
 }
 
 export interface RoomSpec {
@@ -113,6 +114,15 @@ export interface Lead {
     notes?: string;
 }
 
+export interface PetSensorData {
+    timestamp: number;
+    gps: { lat: number; lng: number; speed: number };
+    accelerometer: { x: number; y: number; z: number; tilt: number };
+    battery: number;
+    connectionType: 'Cellular' | 'WiFi' | 'BLE';
+    status: 'Idle' | 'Moving' | 'Stopped' | 'Digestion_Event';
+}
+
 export interface Listing {
     id: string;
     address: string;
@@ -133,6 +143,7 @@ export interface Listing {
     closingChecklist: ClosingChecklistItem[];
     leads?: Lead[]; // Optional lead list for the banker view
     plotPlan?: string; // Base64 image of the overall plot plan
+    petData?: PetSensorData;
 }
 
 export interface ChatMessage {

@@ -2,7 +2,7 @@
 import React from 'react';
 import { RealEstateStatus } from '../types';
 import { Card } from './ui/Card';
-import { CheckCircle, Circle, Home, Building, Gavel, Banknote, FileSignature, Handshake, Check, Calendar, Globe, Briefcase, Film } from './ui/Icons';
+import { CheckCircle, Circle, Home, Building, Gavel, Banknote, FileSignature, Handshake, Check, Calendar, Globe, Briefcase, Film, PenTool, Dog } from './ui/Icons';
 import AdBanner from './AdBanner';
 
 interface WorkflowStepperProps {
@@ -14,6 +14,7 @@ const steps = [
     { name: RealEstateStatus.LISTING, icon: <Home className="w-5 h-5" /> },
     { name: RealEstateStatus.ROOM_SPECS, icon: <Building className="w-5 h-5" /> },
     { name: RealEstateStatus.VIRTUAL_TOUR, icon: <Film className="w-5 h-5" /> },
+    { name: RealEstateStatus.PLOT_PLAN, icon: <PenTool className="w-5 h-5" /> },
     { name: RealEstateStatus.SCHEDULE, icon: <Calendar className="w-5 h-5" /> },
     { name: RealEstateStatus.SYNDICATION, icon: <Globe className="w-5 h-5" /> },
     { name: RealEstateStatus.OFFERS, icon: <Gavel className="w-5 h-5" /> },
@@ -21,6 +22,7 @@ const steps = [
     { name: RealEstateStatus.ESCROW, icon: <Banknote className="w-5 h-5" /> },
     { name: RealEstateStatus.DOCUMENTS, icon: <FileSignature className="w-5 h-5" /> },
     { name: RealEstateStatus.LIFECYCLE, icon: <Handshake className="w-5 h-5" /> },
+    { name: RealEstateStatus.PET_TRACKER, icon: <Dog className="w-5 h-5" /> },
     { name: RealEstateStatus.CLOSED, icon: <Check className="w-5 h-5" /> },
 ];
 

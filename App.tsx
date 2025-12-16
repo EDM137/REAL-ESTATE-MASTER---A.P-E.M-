@@ -17,6 +17,7 @@ import SovereignBanker from './components/SovereignBanker';
 import VirtualTourCreator from './components/VirtualTourCreator';
 import ClosingDashboard from './components/ClosingDashboard';
 import PlotPlanEditor from './components/PlotPlanEditor';
+import PetTracker from './components/PetTracker';
 import { Home, Shield, Sun, FileText, Wrench } from './components/ui/Icons';
 
 const mockListing: Listing = {
@@ -174,6 +175,8 @@ const App: React.FC = () => {
                 return <ClosingDashboard listing={listing} />;
             case RealEstateStatus.PLOT_PLAN:
                 return <PlotPlanEditor listing={listing} onListingUpdate={handleListingUpdate} />;
+            case RealEstateStatus.PET_TRACKER:
+                return <PetTracker />;
             default:
                 return (
                     <div className="bg-brand-secondary p-8 rounded-lg animate-fade-in flex flex-col items-center justify-center h-full text-center">

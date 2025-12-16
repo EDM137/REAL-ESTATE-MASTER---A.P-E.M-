@@ -1,9 +1,10 @@
 
-import React, { ButtonHTMLAttributes } from 'react';
+import React, { ButtonHTMLAttributes, ElementType } from 'react';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: 'primary' | 'secondary' | 'outline' | 'destructive';
     size?: 'sm' | 'md' | 'lg' | 'icon';
+    as?: ElementType;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -11,6 +12,7 @@ const Button: React.FC<ButtonProps> = ({
     className = '',
     variant = 'primary',
     size = 'md',
+    as: Component = 'button',
     ...props
 }) => {
     const baseStyles = 'inline-flex items-center justify-center rounded-md font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-brand-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed';
@@ -30,12 +32,12 @@ const Button: React.FC<ButtonProps> = ({
     };
 
     return (
-        <button
+        <Component
             className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
-            {...props}
+            {...props as any}
         >
             {children}
-        </button>
+        </Component>
     );
 };
 

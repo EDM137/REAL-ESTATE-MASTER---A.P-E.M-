@@ -6,6 +6,7 @@ import { Button } from './ui/Button';
 import { X, Shield, Camera, Mic, CheckCircle, FileText, User, Pause, Play, Lock, Languages, Check } from './ui/Icons';
 import AdBanner from './AdBanner';
 import { GoogleGenAI } from '@google/genai';
+import AudioTranscriber from './AudioTranscriber';
 
 interface SecureChatProps {
     listing: Listing;
@@ -26,6 +27,7 @@ const SecureChat: React.FC<SecureChatProps> = ({ listing, onListingUpdate, onClo
 
     // Translation State
     const [showTranslateSettings, setShowTranslateSettings] = useState(false);
+    const [showVoiceInterpreter, setShowVoiceInterpreter] = useState(false);
     const [translationEnabled, setTranslationEnabled] = useState(false);
     const [targetLanguage, setTargetLanguage] = useState('Spanish');
     const [translationCache, setTranslationCache] = useState<Record<string, string>>({});
@@ -160,20 +162,30 @@ const SecureChat: React.FC<SecureChatProps> = ({ listing, onListingUpdate, onClo
                     </div>
                     <div className="flex gap-2">
                          {!isVideoMode && (
-                            <div className="relative">
+                            <div className="relative flex gap-2">
+                                <Button
+                                    size="sm"
+                                    variant={showVoiceInterpreter ? 'primary' : 'outline'}
+                                    onClick={() => setShowVoiceInterpreter(!showVoiceInterpreter)}
+                                    title="Live Voice Interpreter"
+                                    className="hidden md:flex"
+                                >
+                                    <Mic className="w-4 h-4 mr-2" />
+                                    Interpreter
+                                </Button>
                                 <Button 
                                     size="sm" 
                                     variant={translationEnabled ? 'primary' : 'outline'}
                                     onClick={() => setShowTranslateSettings(!showTranslateSettings)}
-                                    title="Translation Settings"
+                                    title="Text Translation Settings"
                                 >
                                     <Languages className="w-4 h-4 mr-2" />
-                                    {translationEnabled ? targetLanguage : 'Translate'}
+                                    {translationEnabled ? targetLanguage : 'Text Trans'}
                                 </Button>
                                 {showTranslateSettings && (
                                     <div className="absolute top-full right-0 mt-2 w-56 bg-brand-secondary border border-brand-accent rounded-lg shadow-xl p-3 z-50">
                                         <div className="flex items-center justify-between mb-3">
-                                            <span className="text-sm font-semibold text-brand-highlight">Translator</span>
+                                            <span className="text-sm font-semibold text-brand-highlight">Text Translator</span>
                                             <button 
                                                 onClick={() => setTranslationEnabled(!translationEnabled)}
                                                 className={`w-10 h-5 rounded-full relative transition-colors ${translationEnabled ? 'bg-brand-green' : 'bg-gray-600'}`}
@@ -236,6 +248,25 @@ const SecureChat: React.FC<SecureChatProps> = ({ listing, onListingUpdate, onClo
                 </Card.Header>
                 
                 <Card.Content className="flex-grow overflow-hidden flex gap-4 p-4 relative">
+                    {/* Voice Interpreter Overlay */}
+                    {showVoiceInterpreter && (
+                        <div className="absolute top-4 right-4 z-40 w-80 bg-brand-primary border border-brand-accent rounded-lg shadow-2xl p-4 animate-fade-in">
+                            <div className="flex justify-between items-center mb-4 border-b border-brand-accent pb-2">
+                                <h4 className="font-bold text-brand-highlight flex items-center gap-2">
+                                    <Languages className="w-4 h-4 text-brand-blue" />
+                                    Live Interpreter
+                                </h4>
+                                <button onClick={() => setShowVoiceInterpreter(false)} className="text-brand-light hover:text-white">
+                                    <X className="w-4 h-4" />
+                                </button>
+                            </div>
+                            <p className="text-xs text-brand-light mb-4">
+                                Detects foreign languages and translates to English in real-time.
+                            </p>
+                            <AudioTranscriber />
+                        </div>
+                    )}
+
                     {isVideoMode ? (
                         isOnHold ? (
                             <div className="absolute inset-0 z-10">
