@@ -86,7 +86,7 @@ const AudioTranscriber: React.FC = () => {
                     },
                     inputAudioTranscription: {},
                     outputAudioTranscription: {},
-                    systemInstruction: "You are a professional interpreter. Listen to the input audio. Detect the language. Translate it immediately into English. If the input is in English, repeat it exactly. Output the English translation.",
+                    systemInstruction: "You are a professional interpreter. Listen to the input audio. Detect the language. Translate it immediately into English. If the input is in English, repeat it exactly. Output the English translation. Speak with a highly natural, conversational tone. Incorporate natural prosody, slight pauses between phrases as if breathing, and varying intonation to reflect human thinking patterns. Avoid monotone delivery.",
                 },
             });
             
