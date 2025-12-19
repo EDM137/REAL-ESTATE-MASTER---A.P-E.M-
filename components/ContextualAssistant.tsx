@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Listing, RealEstateStatus } from '../types';
 import { Button } from './ui/Button';
@@ -59,10 +58,10 @@ const ContextualAssistant: React.FC<ContextualAssistantProps> = ({ listing, acti
         setResponse('');
         try {
             const result = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
+                model: 'gemini-3-flash-preview',
                 contents: prompt,
             });
-            setResponse(result.text);
+            setResponse(result.text || '');
         } catch (error) {
             console.error('Gemini API error:', error);
             setResponse('Sorry, I encountered an error. Please try again.');

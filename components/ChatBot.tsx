@@ -18,7 +18,7 @@ const ChatBot: React.FC = () => {
             const genAI = new GoogleGenAI({ apiKey: process.env.API_KEY });
             setAi(genAI);
             const chatSession = genAI.chats.create({
-                model: 'gemini-2.5-flash',
+                model: 'gemini-3-flash-preview',
             });
             setChat(chatSession);
         }
@@ -41,7 +41,7 @@ const ChatBot: React.FC = () => {
 
         try {
             const response = await chat.sendMessage({ message: currentInput });
-            const modelMessage: ChatMessage = { role: 'model', content: response.text };
+            const modelMessage: ChatMessage = { role: 'model', content: response.text || '' };
             setMessages(prev => [...prev, modelMessage]);
         } catch (error) {
             console.error("Gemini API Error:", error);

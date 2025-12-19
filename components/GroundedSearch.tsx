@@ -31,7 +31,7 @@ const GroundedSearch: React.FC = () => {
             let result: GenerateContentResponse;
             if (mode === 'web') {
                  result = await ai.models.generateContent({
-                    model: 'gemini-2.5-flash',
+                    model: 'gemini-3-flash-preview',
                     contents: prompt,
                     config: { tools: [{ googleSearch: {} }] },
                 });
@@ -42,7 +42,7 @@ const GroundedSearch: React.FC = () => {
                     return;
                 }
                 result = await ai.models.generateContent({
-                    model: 'gemini-2.5-flash',
+                    model: 'gemini-3-flash-preview',
                     contents: prompt,
                     config: {
                         tools: [{ googleMaps: {} }],
@@ -54,7 +54,7 @@ const GroundedSearch: React.FC = () => {
             }
             
             const sources = result.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
-            setResponse({ text: result.text, sources });
+            setResponse({ text: result.text || '', sources });
         } catch (err) {
             setError('An error occurred during the search.');
             console.error(err);

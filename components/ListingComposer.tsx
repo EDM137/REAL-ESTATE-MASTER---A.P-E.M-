@@ -1,4 +1,3 @@
-
 import React, { useRef, useState, DragEvent, useEffect } from 'react';
 import { Listing, CustomField } from '../types';
 import { Card } from './ui/Card';
@@ -90,7 +89,7 @@ const ListingComposer: React.FC<ListingComposerProps> = ({ listing, onListingUpd
 
         try {
             const result = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
+                model: 'gemini-3-flash-preview',
                 contents: prompt,
             });
             

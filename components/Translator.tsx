@@ -34,10 +34,10 @@ const Translator: React.FC = () => {
         
         try {
             const result = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
+                model: 'gemini-3-flash-preview',
                 contents: prompt,
             });
-            setTranslatedText(result.text);
+            setTranslatedText(result.text || '');
         } catch (err) {
             console.error("Gemini API error:", err);
             setError("Failed to translate. Please try again.");

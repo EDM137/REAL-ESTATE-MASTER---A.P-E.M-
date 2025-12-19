@@ -58,10 +58,10 @@ const ImageAnalyzer: React.FC = () => {
             };
             
             const result = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
+                model: 'gemini-3-flash-preview',
                 contents: { parts: [imagePart, textPart] },
             });
-            setResponse(result.text);
+            setResponse(result.text || '');
         } catch (err) {
             setError('Failed to process the image. Please try another file.');
             console.error(err);
