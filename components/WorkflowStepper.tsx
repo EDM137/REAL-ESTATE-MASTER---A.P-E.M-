@@ -2,7 +2,7 @@
 import React from 'react';
 import { RealEstateStatus } from '../types';
 import { Card } from './ui/Card';
-import { CheckCircle, Circle, Home, Building, Gavel, Banknote, FileSignature, Handshake, Check, Calendar, Globe, Briefcase, Film, PenTool, Dog } from './ui/Icons';
+import { CheckCircle, Circle, Home, Building, Gavel, Banknote, FileSignature, Handshake, Check, Calendar, Globe, Briefcase, Film, PenTool, Dog, Wrench } from './ui/Icons';
 import AdBanner from './AdBanner';
 
 interface WorkflowStepperProps {
@@ -21,6 +21,7 @@ const steps = [
     { name: RealEstateStatus.BANKER, icon: <Briefcase className="w-5 h-5" /> },
     { name: RealEstateStatus.ESCROW, icon: <Banknote className="w-5 h-5" /> },
     { name: RealEstateStatus.DOCUMENTS, icon: <FileSignature className="w-5 h-5" /> },
+    { name: RealEstateStatus.MAINTENANCE, icon: <Wrench className="w-5 h-5" /> },
     { name: RealEstateStatus.LIFECYCLE, icon: <Handshake className="w-5 h-5" /> },
     { name: RealEstateStatus.PET_TRACKER, icon: <Dog className="w-5 h-5" /> },
     { name: RealEstateStatus.CLOSED, icon: <Check className="w-5 h-5" /> },

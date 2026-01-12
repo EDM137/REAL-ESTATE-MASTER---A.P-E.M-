@@ -9,6 +9,7 @@ export enum RealEstateStatus {
     BANKER = 'Sovereign Banker',
     ESCROW = 'Escrow Gateway',
     DOCUMENTS = 'Document Vault',
+    MAINTENANCE = 'Maintenance Portal',
     LIFECYCLE = 'Service Lifecycle',
     CLOSED = 'Closed',
     PLOT_PLAN = 'Plot Plan & Design',
@@ -102,7 +103,6 @@ export interface ClosingChecklistItem {
     approvedBy: string[]; // e.g. ['Buyer', 'Seller', 'Mediator']
 }
 
-// New Lead Interface for Banker/Broker
 export interface Lead {
     id: string;
     fullName: string;
@@ -121,6 +121,20 @@ export interface PetSensorData {
     battery: number;
     connectionType: 'Cellular' | 'WiFi' | 'BLE';
     status: 'Idle' | 'Moving' | 'Stopped' | 'Digestion_Event';
+}
+
+export interface MaintenanceJob {
+    id: string;
+    title: string;
+    contractor: string;
+    estimateAmount: number;
+    actualAmount: number;
+    status: 'Quoting' | 'Active' | 'Completed' | 'Paid';
+    startDate: string;
+    endDate?: string;
+    description: string;
+    photosBefore: string[];
+    photosAfter: string[];
 }
 
 export interface Listing {
@@ -144,6 +158,7 @@ export interface Listing {
     leads?: Lead[]; // Optional lead list for the banker view
     plotPlan?: string; // Base64 image of the overall plot plan
     petData?: PetSensorData;
+    maintenanceJobs?: MaintenanceJob[];
 }
 
 export interface ChatMessage {

@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from './ui/Button';
 import { Mic } from './ui/Icons';
@@ -57,13 +58,12 @@ const AudioTranscriber: React.FC = () => {
             outputAudioContextRef.current = outputContext;
             
             sessionPromiseRef.current = ai.live.connect({
-                model: 'gemini-2.5-flash-native-audio-preview-09-2025',
+                model: 'gemini-2.5-flash-native-audio-preview-12-2025',
                 callbacks: {
                     onopen: () => {
                         console.debug("Live session opened");
                     },
                     onmessage: async (message: LiveServerMessage) => {
-                        // 1. Handle Input Transcription (User's speech)
                         const inputTranscript = message.serverContent?.inputTranscription;
                         if (inputTranscript) {
                             if (inputTranscript.isFinal) {
@@ -74,7 +74,6 @@ const AudioTranscriber: React.FC = () => {
                             }
                         }
 
-                        // 2. Handle Output Transcription (Model's English translation text)
                         const outputTranscript = message.serverContent?.outputTranscription;
                         if (outputTranscript) {
                              if (outputTranscript.isFinal) {
@@ -85,7 +84,6 @@ const AudioTranscriber: React.FC = () => {
                             }
                         }
 
-                        // 3. Handle Model Audio Playback (PCM)
                         const audioData = message.serverContent?.modelTurn?.parts[0]?.inlineData?.data;
                         if (audioData && outputAudioContextRef.current) {
                             const ctx = outputAudioContextRef.current;
@@ -107,7 +105,6 @@ const AudioTranscriber: React.FC = () => {
                             activeSourcesRef.current.add(source);
                         }
 
-                        // 4. Handle Interruptions
                         if (message.serverContent?.interrupted) {
                             activeSourcesRef.current.forEach(source => {
                                 try { source.stop(); } catch(e) {}
@@ -134,10 +131,10 @@ const AudioTranscriber: React.FC = () => {
                     systemInstruction: `You are a professional, high-fidelity real-time interpreter. 
                     - Listen to input audio and detect the language.
                     - Translate immediately into English.
-                    - If the input is English, confirm understanding or repeat it naturally.
                     - VOCAL STYLE: Speak with an extremely natural, human-like voice. Incorporate subtle breathing sounds between long phrases. 
                     - Use natural micro-pauses and varying pitch to reflect organic thinking patterns. 
-                    - Avoid robotic or perfectly continuous speech; aim for a warm, conversational, and "settled" delivery that feels professional yet human.`,
+                    - Use a conversational, "settled" delivery. Occasionally add brief 'um' or 'hm' if the translation is complex, to simulate human cognition.
+                    - Avoid robotic cadence at all costs.`,
                 },
             });
             
@@ -196,14 +193,6 @@ const AudioTranscriber: React.FC = () => {
         setIsRecording(false);
     };
 
-    useEffect(() => {
-        return () => {
-            if (isRecording) {
-                stopRecording();
-            }
-        };
-    }, [isRecording]);
-
     return (
         <div className="space-y-4 animate-fade-in text-center">
             <Button
@@ -229,7 +218,7 @@ const AudioTranscriber: React.FC = () => {
             </div>
             
             <p className="text-[10px] text-brand-light italic">
-                Proprietary AI Voice: Natural Prosody & Breathing Enabled
+                Sovereign-Grade AI Voice: Natural Prosody & Breathing Enabled
             </p>
             
             {error && <p className="text-sm text-red-400 bg-red-500/10 p-2 rounded-md border border-red-500/30">{error}</p>}

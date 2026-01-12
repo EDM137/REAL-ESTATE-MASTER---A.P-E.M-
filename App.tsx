@@ -18,6 +18,7 @@ import VirtualTourCreator from './components/VirtualTourCreator';
 import ClosingDashboard from './components/ClosingDashboard';
 import PlotPlanEditor from './components/PlotPlanEditor';
 import PetTracker from './components/PetTracker';
+import MaintenancePortal from './components/MaintenancePortal';
 import { Home, Shield, Sun, FileText, Wrench } from './components/ui/Icons';
 
 const mockListing: Listing = {
@@ -34,85 +35,28 @@ const mockListing: Listing = {
         { id: 'cf1', key: 'Zoning', value: 'R1' },
         { id: 'cf2', key: 'Year Built', value: '1965' }
     ],
-    roomSpecs: [
-        { id: 'room1', roomName: 'Living Room', ceilingHeight: 10, windowCount: 4, sunlightExposure: 'High', orientation: 'South', materials: 'Hardwood floors, plaster walls', notes: 'Features a large fireplace and built-in shelving.', photos: [], floorPlanImage: undefined },
-        { id: 'room2', roomName: 'Kitchen', ceilingHeight: 9, windowCount: 2, sunlightExposure: 'Medium', orientation: 'West', materials: 'Quartz countertops, stainless steel appliances', notes: 'Newly renovated in 2023. Gas range.', photos: [], floorPlanImage: undefined },
-    ],
-    offers: [
-        { 
-            id: 'offer1', 
-            buyerName: 'John Smith', 
-            agentName: 'Agent Alice', 
-            amount: 740000, 
-            contingencies: ['Inspection', 'Financing'], 
-            status: 'Pending',
-            receivedAt: '2024-08-01T10:00:00',
-            terms: 'Requesting repairs to roof if needed.',
-            history: [{ action: 'Received', amount: 740000, date: '2024-08-01T10:00:00' }],
-            financingType: 'Conventional',
-            closingDays: 30,
-            downPayment: 148000 // 20%
-        },
-        { 
-            id: 'offer2', 
-            buyerName: 'Emily White', 
-            agentName: 'Agent Bob', 
-            amount: 735000, 
-            contingencies: ['Inspection'], 
-            status: 'Pending',
-            receivedAt: '2024-08-02T14:30:00',
-            terms: 'Quick close. Proof of funds attached.',
-            history: [{ action: 'Received', amount: 735000, date: '2024-08-02T14:30:00' }],
-            financingType: 'Cash',
-            closingDays: 14,
-            downPayment: 735000 // 100%
-        },
-        { 
-            id: 'offer3', 
-            buyerName: 'InvestCorp LLC', 
-            agentName: 'Agent Charlie', 
-            amount: 720000, 
-            contingencies: [], 
-            status: 'Rejected',
-            receivedAt: '2024-07-30T09:15:00',
-            terms: 'As-is. No questions asked.',
-            history: [{ action: 'Received', amount: 720000, date: '2024-07-30T09:15:00' }, { action: 'Rejected', amount: 720000, date: '2024-07-31T10:00:00' }],
-            financingType: 'Cash',
-            closingDays: 7,
-            downPayment: 720000
-        },
-        { 
-            id: 'offer4', 
-            buyerName: 'The Johnson Family', 
-            agentName: 'Agent David', 
-            amount: 760000, 
-            contingencies: ['Inspection', 'Financing', 'Sale of Home'], 
-            status: 'Pending',
-            receivedAt: '2024-08-03T11:00:00',
-            terms: 'We love the house! Contingent on selling our current home.',
-            history: [{ action: 'Received', amount: 760000, date: '2024-08-03T11:00:00' }],
-            financingType: 'FHA',
-            closingDays: 45,
-            downPayment: 26600 // 3.5%
-        },
-    ],
+    roomSpecs: [],
+    offers: [],
     escrowMilestones: [],
     documents: [],
-    communications: [
-        { agentType: "Buyer's Agent", message: 'My client is very interested. Is the closing date flexible?', timestamp: '2024-08-01 11:30 AM' },
-        { agentType: "Listing Agent", message: 'The seller would prefer the listed date but has some room to negotiate for a strong offer.', timestamp: '2024-08-01 11:35 AM' },
-    ],
+    communications: [],
     appointments: [],
-    closingChecklist: [
-        { id: 'cl1', label: 'Final Walkthrough Completed & Approved', completed: false, approvedBy: [] },
-        { id: 'cl2', label: 'Keys, Remotes & Security Codes Handover', completed: false, approvedBy: [] },
-        { id: 'cl3', label: 'All Requested Repairs Verified by Inspector', completed: false, approvedBy: [] },
-        { id: 'cl4', label: 'Title Clear & Insurance Bound', completed: false, approvedBy: [] },
-        { id: 'cl5', label: 'Final Funds Transferred to Escrow', completed: false, approvedBy: [] },
-        { id: 'cl6', label: 'Utility Transfer Scheduled', completed: false, approvedBy: [] },
-        { id: 'cl7', label: 'Clean-out & Debris Removal Confirmed', completed: false, approvedBy: [] },
-    ],
-    leads: []
+    closingChecklist: [],
+    maintenanceJobs: [
+        {
+            id: 'job-1',
+            title: 'Kitchen Backsplash & Counters',
+            contractor: 'Elite Designs Co.',
+            estimateAmount: 4500,
+            actualAmount: 4200,
+            status: 'Completed',
+            startDate: '2024-05-10',
+            endDate: '2024-05-15',
+            description: 'Full quartz installation and subway tile backsplash.',
+            photosBefore: [],
+            photosAfter: []
+        }
+    ]
 };
 
 const App: React.FC = () => {
@@ -127,13 +71,11 @@ const App: React.FC = () => {
             setShowTerms(true);
         }
         
-        // Load draft if available
         const draft = localStorage.getItem('listingDraft');
         if (draft) {
              try {
                  const parsed = JSON.parse(draft);
                  setListing(parsed);
-                 console.log("Draft loaded from local storage.");
              } catch(e) {
                  console.error("Failed to parse draft:", e);
              }
@@ -169,6 +111,8 @@ const App: React.FC = () => {
                  return <EscrowDashboard listing={listing} />;
             case RealEstateStatus.DOCUMENTS:
                 return <DocumentVault listing={listing} onListingUpdate={handleListingUpdate} />;
+            case RealEstateStatus.MAINTENANCE:
+                return <MaintenancePortal listing={listing} onListingUpdate={handleListingUpdate} />;
             case RealEstateStatus.LIFECYCLE:
                 return <LifecycleManager listing={listing} />;
             case RealEstateStatus.CLOSED:
@@ -180,12 +124,9 @@ const App: React.FC = () => {
             default:
                 return (
                     <div className="bg-brand-secondary p-8 rounded-lg animate-fade-in flex flex-col items-center justify-center h-full text-center">
-                        <div className="p-4 bg-brand-accent rounded-full mb-4">
-                            <Wrench className="w-12 h-12 text-brand-highlight" />
-                        </div>
+                        <Wrench className="w-12 h-12 text-brand-light mb-4" />
                         <h2 className="text-2xl font-bold mb-2">Module In Development</h2>
-                        <p className="text-brand-light">The component for '{activeStep}' is coming soon.</p>
-                        <p className="mt-4 text-sm">Please select another step from the workflow menu.</p>
+                        <p className="text-brand-light">Step '{activeStep}' is being ignited.</p>
                     </div>
                 );
         }
@@ -210,10 +151,6 @@ const App: React.FC = () => {
                         <Shield className="w-4 h-4 text-brand-light" />
                         <span>Closing War Room</span>
                     </button>
-                     <div className="flex items-center gap-2">
-                        <Sun className="w-4 h-4 text-brand-light" />
-                        <span>Light Mode</span>
-                    </div>
                 </div>
             </header>
 
@@ -221,18 +158,16 @@ const App: React.FC = () => {
                 <aside className="col-span-12 md:col-span-3 lg:col-span-2">
                     <WorkflowStepper activeStep={activeStep} setActiveStep={setActiveStep} />
                 </aside>
-
                 <section className="col-span-12 md:col-span-9 lg:col-span-7">
                     {renderActiveStepComponent()}
                 </section>
-
                 <aside className="col-span-12 lg:col-span-3">
                     <AiCopilot listing={listing} activeStep={activeStep} />
                 </aside>
             </main>
             
             <footer className="text-center p-4 border-t border-brand-accent text-xs text-brand-light">
-                &copy; 2024 SovereignRE Command Center. All functions and features in this application are property and IP of Eric Daniel Malley, owner of Radest Publishing Co. All Rights Reserved.
+                &copy; 2024 SovereignRE. Property of Eric Daniel Malley, owner of Radest Publishing Co. All Rights Reserved.
             </footer>
         </div>
     );
