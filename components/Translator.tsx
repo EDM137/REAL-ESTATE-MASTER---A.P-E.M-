@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from './ui/Button';
 import { Languages, Volume2, History, X, Bot } from './ui/Icons';
 import { GoogleGenAI } from '@google/genai';
+import { BrandingConfig } from '../types';
 
 const languages = [
     "Spanish", "French", "German", "Japanese", "Mandarin", "Russian", "Arabic", "Vietnamese", "Portuguese", "Italian", "Korean"
@@ -26,7 +27,7 @@ interface TranslationHistory {
 }
 
 const Translator: React.FC = () => {
-    const [mode, setMode] = useState<'translate' | 'educate'>('translate');
+    const [mode, setMode] = useState<'translate' | 'educate' | 'conversation'>('translate');
     const [text, setText] = useState('');
     const [targetLanguage, setTargetLanguage] = useState('Spanish');
     const [context, setContext] = useState('General Conversation');
@@ -35,8 +36,32 @@ const Translator: React.FC = () => {
     const [explanation, setExplanation] = useState('');
     const [detectedLanguage, setDetectedLanguage] = useState('');
     const [history, setHistory] = useState<TranslationHistory[]>([]);
+    const [conversation, setConversation] = useState<{ role: 'user' | 'ai', text: string, original?: string }[]>([]);
     const [error, setError] = useState('');
     const [ai, setAi] = useState<GoogleGenAI | null>(null);
+    const [branding, setBranding] = useState<BrandingConfig | null>(null);
+
+    useEffect(() => {
+        if (process.env.API_KEY) {
+            setAi(new GoogleGenAI({ apiKey: process.env.API_KEY }));
+        }
+        const savedHistory = localStorage.getItem('translationHistory');
+        if (savedHistory) {
+            try {
+                setHistory(JSON.parse(savedHistory));
+            } catch (e) {
+                console.error("Failed to parse history:", e);
+            }
+        }
+        const savedBranding = localStorage.getItem('brandingConfig');
+        if (savedBranding) {
+            try {
+                setBranding(JSON.parse(savedBranding));
+            } catch (e) {
+                console.error("Failed to parse branding:", e);
+            }
+        }
+    }, []);
 
     useEffect(() => {
         if (process.env.API_KEY) {
@@ -76,10 +101,11 @@ const Translator: React.FC = () => {
             const detected = detectionResult.text?.trim() || 'Unknown';
             setDetectedLanguage(detected);
 
-            // Step 2: Translate with Context
-            const translationPrompt = `Translate the following text from ${detected} to ${targetLanguage}. 
+            // Step 2: Translate with Context and Branding
+            const brandingInfo = branding ? `You are translating for ${branding.userName} from ${branding.companyName}. ` : '';
+            const translationPrompt = `${brandingInfo}Translate the following text from ${detected} to ${targetLanguage}. 
             Context: ${context}. 
-            The translation should be accurate and culturally appropriate for this context.
+            The translation should be accurate, professional, and culturally appropriate for this context.
             Provide only the translation, without any additional commentary or quotation marks: "${text}"`;
             
             const translationResult = await ai.models.generateContent({
@@ -99,6 +125,11 @@ const Translator: React.FC = () => {
                 timestamp: Date.now()
             }, ...prev].slice(0, 10));
 
+            if (mode === 'conversation') {
+                setConversation(prev => [...prev, { role: 'user', text: text }, { role: 'ai', text: result, original: text }]);
+                setText('');
+            }
+
         } catch (err) {
             console.error("Gemini API error:", err);
             setError("Failed to translate. Please try again.");
@@ -112,7 +143,7 @@ const Translator: React.FC = () => {
         try {
             const response = await ai.models.generateContent({
                 model: "gemini-2.5-flash-preview-tts",
-                contents: [{ parts: [{ text: `Say this in ${lang}: ${content}` }] }],
+                contents: [{ parts: [{ text: `Say this in ${lang} naturally, with human-like inflection, calm and clear: ${content}` }] }],
                 config: {
                     responseModalities: ["AUDIO" as any],
                     speechConfig: {
@@ -143,10 +174,12 @@ const Translator: React.FC = () => {
         setError('');
 
         try {
-            const prompt = `You are a language educator. The user wants to learn about: "${text}". 
+            const brandingInfo = branding ? `You are teaching ${branding.userName} from ${branding.companyName}. ` : '';
+            const prompt = `${brandingInfo}You are a world-class language educator. The user wants to learn about: "${text}". 
             If it's a phrase, explain its meaning, usage, and how to say it in ${targetLanguage}. 
-            If it's a question about grammar or culture, provide a clear and helpful explanation.
-            Keep the tone encouraging and professional.`;
+            If it's a question about grammar or culture, provide a clear, deep, and helpful explanation.
+            Focus on real-world application and real estate context where relevant.
+            Keep the tone encouraging, professional, and clear.`;
             
             const result = await ai.models.generateContent({
                 model: 'gemini-3-flash-preview',
@@ -173,21 +206,65 @@ const Translator: React.FC = () => {
                     Interpreter
                 </button>
                 <button 
+                    onClick={() => setMode('conversation')}
+                    className={`flex-1 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded transition-all ${mode === 'conversation' ? 'bg-brand-blue text-white shadow-sm' : 'text-brand-light hover:text-brand-highlight'}`}
+                >
+                    Live Chat
+                </button>
+                <button 
                     onClick={() => setMode('educate')}
                     className={`flex-1 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded transition-all ${mode === 'educate' ? 'bg-brand-blue text-white shadow-sm' : 'text-brand-light hover:text-brand-highlight'}`}
                 >
-                    Language Educator
+                    Educator
                 </button>
             </div>
+
+            {mode === 'conversation' && (
+                <div className="bg-brand-secondary border border-brand-accent rounded-lg h-64 overflow-y-auto p-4 space-y-4 shadow-inner">
+                    {conversation.length === 0 ? (
+                        <div className="h-full flex flex-col items-center justify-center text-brand-light opacity-50 space-y-2">
+                            <Bot className="w-8 h-8" />
+                            <p className="text-xs">Start a back-and-forth conversation.</p>
+                        </div>
+                    ) : (
+                        conversation.map((msg, i) => (
+                            <div key={i} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
+                                <div className={`max-w-[80%] p-2 rounded-lg text-sm ${msg.role === 'user' ? 'bg-brand-blue text-white' : 'bg-brand-primary border border-brand-accent text-brand-highlight'}`}>
+                                    {msg.text}
+                                    {msg.role === 'ai' && (
+                                        <button 
+                                            onClick={() => handlePronounce(msg.text, targetLanguage)}
+                                            className="ml-2 inline-block text-brand-blue hover:text-brand-highlight transition-colors"
+                                        >
+                                            <Volume2 className="w-3 h-3" />
+                                        </button>
+                                    )}
+                                </div>
+                                {msg.original && <span className="text-[10px] text-brand-light mt-1 italic">"{msg.original}"</span>}
+                            </div>
+                        ))
+                    )}
+                </div>
+            )}
 
             <div className="relative">
                 <textarea
                     value={text}
                     onChange={(e) => setText(e.target.value)}
-                    placeholder={mode === 'translate' ? "Enter text to translate..." : "Ask how to say something, or what a phrase means..."}
-                    rows={4}
+                    placeholder={
+                        mode === 'translate' ? "Enter text to translate..." : 
+                        mode === 'conversation' ? "Type to speak back and forth..." :
+                        "Ask how to say something, or what a phrase means..."
+                    }
+                    rows={mode === 'conversation' ? 2 : 4}
                     className="w-full bg-brand-secondary border border-brand-accent rounded-md p-3 text-sm text-brand-highlight focus:ring-2 focus:ring-brand-blue transition-shadow pr-10"
                     disabled={isLoading}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey && mode === 'conversation') {
+                            e.preventDefault();
+                            handleTranslate();
+                        }
+                    }}
                 />
                 {text && (
                     <button 
@@ -199,56 +276,41 @@ const Translator: React.FC = () => {
                 )}
             </div>
 
-            {mode === 'translate' ? (
-                <>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                            <label className="text-[10px] uppercase font-bold text-brand-light tracking-widest">Target Language</label>
-                            <select
-                                value={targetLanguage}
-                                onChange={(e) => setTargetLanguage(e.target.value)}
-                                className="w-full bg-brand-primary border border-brand-accent rounded-md p-2 text-sm text-brand-highlight focus:ring-2 focus:ring-brand-blue"
-                                disabled={isLoading}
-                            >
-                                {languages.map(lang => <option key={lang} value={lang}>{lang}</option>)}
-                            </select>
-                        </div>
-                        <div className="space-y-1">
-                            <label className="text-[10px] uppercase font-bold text-brand-light tracking-widest">Context / Intent</label>
-                            <select
-                                value={context}
-                                onChange={(e) => setContext(e.target.value)}
-                                className="w-full bg-brand-primary border border-brand-accent rounded-md p-2 text-sm text-brand-highlight focus:ring-2 focus:ring-brand-blue"
-                                disabled={isLoading}
-                            >
-                                {contexts.map(ctx => <option key={ctx} value={ctx}>{ctx}</option>)}
-                            </select>
-                        </div>
-                    </div>
+            <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                    <label className="text-[10px] uppercase font-bold text-brand-light tracking-widest">Target Language</label>
+                    <select
+                        value={targetLanguage}
+                        onChange={(e) => setTargetLanguage(e.target.value)}
+                        className="w-full bg-brand-primary border border-brand-accent rounded-md p-2 text-sm text-brand-highlight focus:ring-2 focus:ring-brand-blue"
+                        disabled={isLoading}
+                    >
+                        {languages.map(lang => <option key={lang} value={lang}>{lang}</option>)}
+                    </select>
+                </div>
+                <div className="space-y-1">
+                    <label className="text-[10px] uppercase font-bold text-brand-light tracking-widest">Context / Intent</label>
+                    <select
+                        value={context}
+                        onChange={(e) => setContext(e.target.value)}
+                        className="w-full bg-brand-primary border border-brand-accent rounded-md p-2 text-sm text-brand-highlight focus:ring-2 focus:ring-brand-blue"
+                        disabled={isLoading}
+                    >
+                        {contexts.map(ctx => <option key={ctx} value={ctx}>{ctx}</option>)}
+                    </select>
+                </div>
+            </div>
 
-                    <Button onClick={handleTranslate} disabled={isLoading || !text.trim() || !ai} className="w-full py-3 shadow-lg shadow-brand-blue/20">
-                        <Languages className="w-5 h-5 mr-2" />
-                        {isLoading ? 'AI Analyzing & Translating...' : 'Execute Translation'}
-                    </Button>
-                </>
+            {mode === 'translate' || mode === 'conversation' ? (
+                <Button onClick={handleTranslate} disabled={isLoading || !text.trim() || !ai} className="w-full py-3 shadow-lg shadow-brand-blue/20">
+                    <Languages className="w-5 h-5 mr-2" />
+                    {isLoading ? 'AI Analyzing & Translating...' : mode === 'conversation' ? 'Send & Translate' : 'Execute Translation'}
+                </Button>
             ) : (
-                <>
-                    <div className="space-y-1">
-                        <label className="text-[10px] uppercase font-bold text-brand-light tracking-widest">Language of Interest</label>
-                        <select
-                            value={targetLanguage}
-                            onChange={(e) => setTargetLanguage(e.target.value)}
-                            className="w-full bg-brand-primary border border-brand-accent rounded-md p-2 text-sm text-brand-highlight focus:ring-2 focus:ring-brand-blue"
-                            disabled={isLoading}
-                        >
-                            {languages.map(lang => <option key={lang} value={lang}>{lang}</option>)}
-                        </select>
-                    </div>
-                    <Button onClick={handleEducate} disabled={isLoading || !text.trim() || !ai} className="w-full py-3 shadow-lg shadow-brand-blue/20">
-                        <Bot className="w-5 h-5 mr-2" />
-                        {isLoading ? 'AI Educator Thinking...' : 'Ask Language Coach'}
-                    </Button>
-                </>
+                <Button onClick={handleEducate} disabled={isLoading || !text.trim() || !ai} className="w-full py-3 shadow-lg shadow-brand-blue/20">
+                    <Bot className="w-5 h-5 mr-2" />
+                    {isLoading ? 'AI Educator Thinking...' : 'Ask Language Coach'}
+                </Button>
             )}
             
             {error && <p className="text-sm text-red-400 bg-red-500/10 p-2 rounded-md border border-red-500/20">{error}</p>}

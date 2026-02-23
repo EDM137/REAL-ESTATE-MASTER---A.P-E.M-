@@ -236,7 +236,7 @@ const App: React.FC = () => {
             </main>
             
             <footer className="text-center p-4 border-t border-brand-accent text-xs text-brand-light">
-                &copy; 2024 SovereignRE. Property of Eric Daniel Malley, owner of Radest Publishing Co. All Rights Reserved.
+                &copy; 2024 SovereignRE. Property of Eric Daniel Malley, Radest Publishing Co. All Rights Reserved.
             </footer>
         </div>
     );
