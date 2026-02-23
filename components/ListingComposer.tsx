@@ -3,8 +3,9 @@ import { Listing, CustomField } from '../types';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
-import { Home, Camera, UploadCloud, Trash2, Plus, Sparkles, X, RefreshCw, MapPin, Database } from './ui/Icons';
+import { Home, Camera, UploadCloud, Trash2, Plus, Sparkles, X, RefreshCw, MapPin, Database, Image as ImageIcon } from './ui/Icons';
 import { GoogleGenAI } from '@google/genai';
+import PhotoCarousel from './PhotoCarousel';
 
 interface ListingComposerProps {
     listing: Listing;
@@ -301,7 +302,18 @@ const ListingComposer: React.FC<ListingComposerProps> = ({ listing, onListingUpd
                 </div>
 
                 <div>
-                    <h3 className="text-lg font-semibold mb-3 text-brand-light border-b border-brand-accent pb-2">Media Gallery</h3>
+                    <div className="flex items-center gap-2 mb-3 border-b border-brand-accent pb-2">
+                        <ImageIcon className="w-5 h-5 text-brand-blue" />
+                        <h3 className="text-lg font-semibold text-brand-light">Media Gallery</h3>
+                    </div>
+                    
+                    {listing.photos.length > 0 && (
+                        <div className="mb-6">
+                            <p className="text-xs text-brand-light mb-2 uppercase tracking-widest font-bold">Featured Carousel Preview</p>
+                            <PhotoCarousel photos={listing.photos} />
+                        </div>
+                    )}
+
                     <input type="file" accept="image/*" multiple ref={fileInputRef} onChange={handleFileChange} className="hidden" />
                     <input type="file" accept="image/*" ref={replaceInputRef} onChange={handleReplaceFileChange} className="hidden" />
                     

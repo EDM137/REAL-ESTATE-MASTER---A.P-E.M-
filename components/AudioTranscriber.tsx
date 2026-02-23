@@ -11,6 +11,7 @@ type LiveSession = {
 
 const AudioTranscriber: React.FC = () => {
     const [isRecording, setIsRecording] = useState(false);
+    const [mode, setMode] = useState<'interpreter' | 'educator'>('interpreter');
     const [transcription, setTranscription] = useState('');
     const [translation, setTranslation] = useState('');
     const [error, setError] = useState('');
@@ -127,13 +128,20 @@ const AudioTranscriber: React.FC = () => {
                     },
                     inputAudioTranscription: {},
                     outputAudioTranscription: {},
-                    systemInstruction: `You are Kindra, a professional, high-fidelity real-time interpreter for SovereignRE.
-                    - Listen to input audio and detect the language.
-                    - Translate immediately into English.
-                    - VOCAL STYLE: Maintain a calm, professional, and helpful tone.
-                    - Speak clearly and at a regular pace.
-                    - Do NOT sound strained or panicked.
-                    - Be helpful and accurate in your translations.`,
+                    systemInstruction: `You are Kindra, a professional real-time language expert and educator for SovereignRE.
+                    
+                    ${mode === 'interpreter' ? 
+                        `- ROLE: Real-time Interpreter. Listen to input audio, detect the language, and translate immediately into English.` : 
+                        `- ROLE: Language Educator. Listen to questions about language (e.g., "What does this mean?", "How do I say X in Spanish?"). Provide clear, helpful explanations and correct pronunciations.`
+                    }
+                    
+                    - VOCAL STYLE: 
+                        * Sound human, warm, and professional.
+                        * Incorporate natural, subtle breathing patterns.
+                        * Use proper voice inflection to sound engaging and clear.
+                        * Maintain a steady, comfortable pace—neither too fast nor too slow.
+                        * Be calm, clear, and encouraging.
+                        * Do NOT be robotic. Be visceral, alive, and helpful.`,
                 },
             });
             
@@ -194,6 +202,24 @@ const AudioTranscriber: React.FC = () => {
 
     return (
         <div className="space-y-4 animate-fade-in text-center">
+            <div className="flex justify-center gap-2 mb-2">
+                <Button 
+                    size="sm" 
+                    variant={mode === 'interpreter' ? 'primary' : 'outline'}
+                    onClick={() => setMode('interpreter')}
+                    disabled={isRecording}
+                >
+                    Interpreter Mode
+                </Button>
+                <Button 
+                    size="sm" 
+                    variant={mode === 'educator' ? 'primary' : 'outline'}
+                    onClick={() => setMode('educator')}
+                    disabled={isRecording}
+                >
+                    Education Mode
+                </Button>
+            </div>
             <Button
                 onClick={isRecording ? stopRecording : startRecording}
                 size="lg"
@@ -201,7 +227,7 @@ const AudioTranscriber: React.FC = () => {
                 disabled={!ai}
             >
                 <Mic className={`w-5 h-5 mr-2 ${isRecording ? 'animate-pulse' : ''}`} />
-                {isRecording ? 'Stop Interpreter' : 'Ignite Kindra Voice Interpreter'}
+                {isRecording ? 'Stop Kindra' : `Ignite Kindra ${mode === 'interpreter' ? 'Interpreter' : 'Educator'}`}
             </Button>
             
             <div className="space-y-2">
@@ -209,7 +235,7 @@ const AudioTranscriber: React.FC = () => {
                     {isRecording && <div className="absolute top-0 left-0 w-full h-0.5 bg-brand-blue/30 animate-pulse"></div>}
                     <span className="text-[10px] text-brand-light block mb-1 uppercase tracking-widest font-bold flex items-center gap-2">
                         <Activity className="w-3 h-3 text-brand-blue" />
-                        Source Audio:
+                        {mode === 'interpreter' ? 'Source Audio:' : 'Your Question:'}
                     </span>
                     {transcription || <span className="text-brand-light italic opacity-50">Awaiting input...</span>}
                 </div>
@@ -217,7 +243,7 @@ const AudioTranscriber: React.FC = () => {
                 <div className="p-3 bg-brand-blue/10 border border-brand-blue/30 rounded-lg min-h-[60px] text-left text-sm relative">
                      <span className="text-[10px] text-brand-blue block mb-1 uppercase tracking-widest font-bold flex items-center gap-2">
                         <Zap className="w-3 h-3" />
-                        Kindra's English Interpretation:
+                        {mode === 'interpreter' ? "Kindra's Interpretation:" : "Kindra's Lesson:"}
                     </span>
                     {translation || <span className="text-brand-blue/50 italic">Kindra is listening...</span>}
                 </div>
