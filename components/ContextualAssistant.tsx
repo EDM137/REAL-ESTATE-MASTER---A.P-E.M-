@@ -4,12 +4,15 @@ import { Button } from './ui/Button';
 import { Sparkles, Send } from './ui/Icons';
 import { GoogleGenAI } from '@google/genai';
 
+import TranslatableText from './TranslatableText';
+
 interface ContextualAssistantProps {
     listing: Listing;
     activeStep: RealEstateStatus;
+    appLanguage: string;
 }
 
-const ContextualAssistant: React.FC<ContextualAssistantProps> = ({ listing, activeStep }) => {
+const ContextualAssistant: React.FC<ContextualAssistantProps> = ({ listing, activeStep, appLanguage }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [response, setResponse] = useState('');
     const [promptInput, setPromptInput] = useState('');
@@ -57,9 +60,16 @@ const ContextualAssistant: React.FC<ContextualAssistantProps> = ({ listing, acti
         setIsLoading(true);
         setResponse('');
         try {
+            const systemInstruction = appLanguage !== 'English' 
+                ? `You are a helpful real estate assistant. Please provide your entire response in ${appLanguage}.`
+                : '';
+            
             const result = await ai.models.generateContent({
                 model: 'gemini-3-flash-preview',
                 contents: prompt,
+                config: {
+                    systemInstruction: systemInstruction
+                }
             });
             setResponse(result.text || '');
         } catch (error) {
@@ -81,7 +91,11 @@ const ContextualAssistant: React.FC<ContextualAssistantProps> = ({ listing, acti
         <div className="space-y-4 animate-fade-in">
             <Button onClick={() => handleGenerate(getContextualPrompt())} disabled={isLoading || !ai} className="w-full">
                 <Sparkles className="w-4 h-4 mr-2" />
-                {isLoading ? 'Thinking...' : `Analyze ${activeStep}`}
+                {isLoading ? (
+                    <TranslatableText targetLanguage={appLanguage}>Thinking...</TranslatableText>
+                ) : (
+                    <TranslatableText targetLanguage={appLanguage}>{`Analyze ${activeStep}`}</TranslatableText>
+                )}
             </Button>
             
             {response && (
@@ -99,14 +113,14 @@ const ContextualAssistant: React.FC<ContextualAssistantProps> = ({ listing, acti
                 <textarea
                     value={promptInput}
                     onChange={(e) => setPromptInput(e.target.value)}
-                    placeholder="Ask a follow-up or custom query..."
+                    placeholder={appLanguage === 'English' ? "Ask a follow-up or custom query..." : `Ask in ${appLanguage}...`}
                     rows={3}
                     className="w-full bg-brand-secondary border border-brand-accent rounded-md p-2 text-sm text-brand-highlight focus:ring-2 focus:ring-brand-blue focus:border-brand-blue transition-shadow"
                 />
                  <div className="flex items-center justify-end">
                     <Button type="submit" size="sm" disabled={isLoading || !promptInput.trim()}>
                         <Send className="w-4 h-4 mr-2" />
-                        Submit
+                        <TranslatableText targetLanguage={appLanguage}>Submit</TranslatableText>
                     </Button>
                 </div>
             </form>

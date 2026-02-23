@@ -26,8 +26,14 @@ interface TranslationHistory {
     timestamp: number;
 }
 
-const Translator: React.FC = () => {
-    const [mode, setMode] = useState<'translate' | 'educate' | 'conversation'>('translate');
+interface TranslatorProps {
+    onLanguageSelect?: (lang: string) => void;
+    onComplete?: () => void;
+    isOnboarding?: boolean;
+}
+
+const Translator: React.FC<TranslatorProps> = ({ onLanguageSelect, onComplete, isOnboarding }) => {
+    const [mode, setMode] = useState<'translate' | 'educate' | 'conversation'>(isOnboarding ? 'translate' : 'translate');
     const [text, setText] = useState('');
     const [targetLanguage, setTargetLanguage] = useState('Spanish');
     const [context, setContext] = useState('General Conversation');
@@ -82,10 +88,17 @@ const Translator: React.FC = () => {
     }, [history]);
 
     const handleTranslate = async () => {
-        if (!text.trim() || !ai) {
+        if (!text.trim() && !isOnboarding) {
             setError('Please enter text to translate. AI service might not be available.');
             return;
         }
+        
+        if (isOnboarding && !text.trim()) {
+            // If onboarding and no text, just set the language and let them proceed
+            onLanguageSelect?.(targetLanguage);
+            return;
+        }
+
         setIsLoading(true);
         setTranslatedText('');
         setDetectedLanguage('');
@@ -100,6 +113,11 @@ const Translator: React.FC = () => {
             });
             const detected = detectionResult.text?.trim() || 'Unknown';
             setDetectedLanguage(detected);
+            
+            // Auto-update target language if detected is different and valid
+            if (detected !== 'Unknown' && languages.includes(detected)) {
+                setTargetLanguage(detected);
+            }
 
             // Step 2: Translate with Context and Branding
             const brandingInfo = branding ? `You are translating for ${branding.userName} from ${branding.companyName}. ` : '';
@@ -302,10 +320,25 @@ const Translator: React.FC = () => {
             </div>
 
             {mode === 'translate' || mode === 'conversation' ? (
-                <Button onClick={handleTranslate} disabled={isLoading || !text.trim() || !ai} className="w-full py-3 shadow-lg shadow-brand-blue/20">
-                    <Languages className="w-5 h-5 mr-2" />
-                    {isLoading ? 'AI Analyzing & Translating...' : mode === 'conversation' ? 'Send & Translate' : 'Execute Translation'}
-                </Button>
+                <div className="space-y-3">
+                    <Button onClick={handleTranslate} disabled={isLoading || (!text.trim() && !isOnboarding) || !ai} className="w-full py-3 shadow-lg shadow-brand-blue/20">
+                        <Languages className="w-5 h-5 mr-2" />
+                        {isLoading ? 'AI Analyzing & Translating...' : mode === 'conversation' ? 'Send & Translate' : 'Execute Translation'}
+                    </Button>
+                    
+                    {isOnboarding && (
+                        <Button 
+                            onClick={() => {
+                                onLanguageSelect?.(targetLanguage);
+                                onComplete?.();
+                            }} 
+                            variant="outline" 
+                            className="w-full border-brand-blue text-brand-blue hover:bg-brand-blue hover:text-white"
+                        >
+                            Enter SovereignRE in {targetLanguage}
+                        </Button>
+                    )}
+                </div>
             ) : (
                 <Button onClick={handleEducate} disabled={isLoading || !text.trim() || !ai} className="w-full py-3 shadow-lg shadow-brand-blue/20">
                     <Bot className="w-5 h-5 mr-2" />

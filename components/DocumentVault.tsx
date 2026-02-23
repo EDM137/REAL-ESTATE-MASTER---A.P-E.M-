@@ -3,12 +3,15 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Listing, RealEstateDocument, Signature } from '../types';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
-import { UploadCloud, FileSignature, Download, Trash2, FileText, CheckCircle, Plus, Shield, Send, User, Camera, Crop, EyeOff, Maximize, Lock, RefreshCw, X, Share2 } from './ui/Icons';
+import { UploadCloud, FileSignature, Download, Trash2, FileText, CheckCircle, Plus, Shield, Send, User, Camera, Crop, EyeOff, Maximize, Lock, RefreshCw, X, Share2, Globe } from './ui/Icons';
 import { fileToDataUrl } from '../utils/file';
+
+import { GoogleGenAI } from '@google/genai';
 
 interface DocumentVaultProps {
     listing: Listing;
     onListingUpdate: (listing: Listing) => void;
+    appLanguage?: string;
 }
 
 const DOCUMENT_TEMPLATES: Record<string, string> = {
@@ -32,14 +35,12 @@ const ScannerInterface: React.FC<{ onSave: (doc: RealEstateDocument) => void; on
     const [isEnhanced, setIsEnhanced] = useState(false);
     const [docName, setDocName] = useState('Scanned Document');
     const [docType, setDocType] = useState<string>('Other');
-    const [facingMode, setFacingMode] = useState<'user' | 'environment'>('environment');
     const videoRef = useRef<HTMLVideoElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     const startCamera = async () => {
-        stopCamera(); // Stop any existing stream first
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facingMode } });
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
             }
@@ -61,7 +62,7 @@ const ScannerInterface: React.FC<{ onSave: (doc: RealEstateDocument) => void; on
             startCamera();
         }
         return () => stopCamera();
-    }, [step, facingMode]);
+    }, [step]);
 
     const handleCapture = () => {
         if (videoRef.current && canvasRef.current) {
@@ -136,13 +137,6 @@ const ScannerInterface: React.FC<{ onSave: (doc: RealEstateDocument) => void; on
                         <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
                         <canvas ref={canvasRef} className="hidden" />
                         
-                        {/* Camera Controls */}
-                        <div className="absolute top-4 right-4 flex flex-col gap-2 z-10">
-                            <Button size="icon" variant="secondary" onClick={() => setFacingMode(prev => prev === 'user' ? 'environment' : 'user')} title="Switch Camera">
-                                <RefreshCw className="w-4 h-4" />
-                            </Button>
-                        </div>
-
                         {/* Guidance Frame */}
                         <div className="absolute inset-8 border-2 border-brand-blue/50 rounded-lg pointer-events-none flex flex-col justify-between p-2">
                             <div className="flex justify-between">
@@ -370,10 +364,11 @@ const SignaturePad: React.FC<{ onSave: (data: string) => void; onCancel: () => v
     );
 };
 
-const DocumentVault: React.FC<DocumentVaultProps> = ({ listing, onListingUpdate }) => {
+const DocumentVault: React.FC<DocumentVaultProps> = ({ listing, onListingUpdate, appLanguage = 'English' }) => {
     const [view, setView] = useState<'list' | 'editor' | 'create'>('list');
     const [selectedDocId, setSelectedDocId] = useState<string | null>(null);
     const [isUploading, setIsUploading] = useState(false);
+    const [isTranslating, setIsTranslating] = useState(false);
     const [signingMode, setSigningMode] = useState(false);
     const [templateType, setTemplateType] = useState<string>('Purchase Agreement');
     
@@ -473,6 +468,41 @@ const DocumentVault: React.FC<DocumentVaultProps> = ({ listing, onListingUpdate 
 
     const handleDownloadAll = () => {
         listing.documents.forEach(doc => handleDownload(doc));
+    };
+
+    const handleGenerateDualLanguage = async () => {
+        if (!activeDoc || !activeDoc.content || appLanguage === 'English') return;
+        
+        setIsTranslating(true);
+        try {
+            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+            const prompt = `Translate the following real estate document into ${appLanguage}. 
+            Maintain the legal structure and professional tone. 
+            Document Content:
+            ${activeDoc.content}`;
+            
+            const result = await ai.models.generateContent({
+                model: 'gemini-3-flash-preview',
+                contents: prompt,
+            });
+            
+            const translatedContent = result.text || '';
+            const dualContent = `--- ENGLISH VERSION ---\n\n${activeDoc.content}\n\n\n--- ${appLanguage.toUpperCase()} VERSION ---\n\n${translatedContent}`;
+            
+            const updatedDocs = listing.documents.map(d => 
+                d.id === activeDoc.id 
+                ? { ...d, content: dualContent, name: `${activeDoc.name} (Dual Language)` } 
+                : d
+            );
+            onListingUpdate({ ...listing, documents: updatedDocs });
+            setEditorContent(dualContent);
+            alert(`Dual-language version generated in English and ${appLanguage}.`);
+        } catch (error) {
+            console.error("Translation error:", error);
+            alert("Failed to generate dual-language version.");
+        } finally {
+            setIsTranslating(false);
+        }
     };
 
     const handleScanSave = (newDoc: RealEstateDocument) => {
@@ -681,6 +711,12 @@ const DocumentVault: React.FC<DocumentVaultProps> = ({ listing, onListingUpdate 
                         {!activeDoc.certified && (
                             <Button onClick={handleCertify} size="sm" variant="outline" title="Lock and Certify">
                                 <Shield className="w-4 h-4 mr-2" /> Certify
+                            </Button>
+                        )}
+
+                        {appLanguage !== 'English' && activeDoc.content && (
+                            <Button onClick={handleGenerateDualLanguage} size="sm" variant="outline" disabled={isTranslating}>
+                                <Globe className="w-4 h-4 mr-2" /> {isTranslating ? 'Translating...' : 'Make Dual Language'}
                             </Button>
                         )}
                          

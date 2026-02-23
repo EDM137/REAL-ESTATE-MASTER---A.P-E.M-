@@ -1,5 +1,6 @@
 
 export enum RealEstateStatus {
+    WELCOME = 'Welcome & Translation',
     LISTING = 'Listing Composer',
     ROOM_SPECS = 'Room Specs',
     VIRTUAL_TOUR = 'Virtual Tour Creator',

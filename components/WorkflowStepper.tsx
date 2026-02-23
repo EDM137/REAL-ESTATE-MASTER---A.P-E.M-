@@ -5,9 +5,12 @@ import { Card } from './ui/Card';
 import { CheckCircle, Circle, Home, Building, Gavel, Banknote, FileSignature, Handshake, Check, Calendar, Globe, Briefcase, Film, PenTool, Dog, Wrench } from './ui/Icons';
 import AdBanner from './AdBanner';
 
+import TranslatableText from './TranslatableText';
+
 interface WorkflowStepperProps {
     activeStep: RealEstateStatus;
     setActiveStep: (step: RealEstateStatus) => void;
+    appLanguage?: string;
 }
 
 const steps = [
@@ -27,7 +30,7 @@ const steps = [
     { name: RealEstateStatus.CLOSED, icon: <Check className="w-5 h-5" /> },
 ];
 
-const WorkflowStepper: React.FC<WorkflowStepperProps> = ({ activeStep, setActiveStep }) => {
+const WorkflowStepper: React.FC<WorkflowStepperProps> = ({ activeStep, setActiveStep, appLanguage = 'English' }) => {
     const activeIndex = steps.findIndex(step => step.name === activeStep);
 
     return (
@@ -58,7 +61,7 @@ const WorkflowStepper: React.FC<WorkflowStepperProps> = ({ activeStep, setActive
                                             <Circle className="w-5 h-5 text-brand-light" />
                                         )}
                                         <span className={`font-medium ${isActive ? 'text-white' : 'text-brand-highlight'}`}>
-                                            {step.name}
+                                            <TranslatableText targetLanguage={appLanguage}>{step.name}</TranslatableText>
                                         </span>
                                     </button>
                                 </li>

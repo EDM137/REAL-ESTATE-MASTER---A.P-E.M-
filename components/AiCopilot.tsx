@@ -15,6 +15,7 @@ import Translator from './Translator';
 interface AiCopilotProps {
     listing: Listing;
     activeStep: RealEstateStatus;
+    appLanguage: string;
 }
 
 type ToolName = 'Assistant' | 'Chat' | 'Image Gen' | 'Analyze Image' | 'Kindra Live' | 'Search' | 'Kindra Voice' | 'Translate';
@@ -31,13 +32,13 @@ const tools: { name: ToolName; icon: React.ReactNode }[] = [
 ];
 
 
-const AiCopilot: React.FC<AiCopilotProps> = ({ listing, activeStep }) => {
+const AiCopilot: React.FC<AiCopilotProps> = ({ listing, activeStep, appLanguage }) => {
     const [activeTool, setActiveTool] = useState<ToolName>('Assistant');
 
     const renderActiveTool = () => {
         switch (activeTool) {
             case 'Assistant':
-                return <ContextualAssistant listing={listing} activeStep={activeStep} />;
+                return <ContextualAssistant listing={listing} activeStep={activeStep} appLanguage={appLanguage} />;
             case 'Chat':
                 return <ChatBot />;
             case 'Image Gen':

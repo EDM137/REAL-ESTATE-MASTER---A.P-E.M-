@@ -20,7 +20,9 @@ import PlotPlanEditor from './components/PlotPlanEditor';
 import PetTracker from './components/PetTracker';
 import MaintenancePortal from './components/MaintenancePortal';
 import BrandingSettings from './components/BrandingSettings';
-import { Home, Shield, Sun, FileText, Wrench, Settings, User } from './components/ui/Icons';
+import Translator from './components/Translator';
+import TranslatableText from './components/TranslatableText';
+import { Home, Shield, Sun, FileText, Wrench, Settings, User, Languages } from './components/ui/Icons';
 
 const mockListing: Listing = {
 // ... existing mockListing ...
@@ -63,7 +65,8 @@ const mockListing: Listing = {
 
 const App: React.FC = () => {
     const [listing, setListing] = useState<Listing>(mockListing);
-    const [activeStep, setActiveStep] = useState<RealEstateStatus>(RealEstateStatus.LISTING);
+    const [activeStep, setActiveStep] = useState<RealEstateStatus>(RealEstateStatus.WELCOME);
+    const [appLanguage, setAppLanguage] = useState('English');
     const [showTerms, setShowTerms] = useState(false);
     const [showChat, setShowChat] = useState(false);
     const [showBranding, setShowBranding] = useState(false);
@@ -136,6 +139,26 @@ const App: React.FC = () => {
 
     const renderActiveStepComponent = () => {
         switch (activeStep) {
+            case RealEstateStatus.WELCOME:
+                return (
+                    <div className="space-y-6 animate-fade-in">
+                        <div className="bg-brand-secondary p-8 rounded-lg border border-brand-accent text-center">
+                            <Languages className="w-16 h-16 text-brand-blue mx-auto mb-4" />
+                            <h2 className="text-3xl font-bold text-brand-highlight mb-4">Welcome to SovereignRE</h2>
+                            <p className="text-brand-light mb-6">
+                                To provide the most seamless experience, please select your preferred language. 
+                                Our AI Assistant will guide you through the entire real estate lifecycle in your native tongue.
+                            </p>
+                            <div className="max-w-md mx-auto">
+                                <Translator 
+                                    onLanguageSelect={(lang) => setAppLanguage(lang)} 
+                                    onComplete={() => setActiveStep(RealEstateStatus.LISTING)}
+                                    isOnboarding={true}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                );
             case RealEstateStatus.LISTING:
                 return <ListingComposer listing={listing} onListingUpdate={handleListingUpdate} />;
             case RealEstateStatus.ROOM_SPECS:
@@ -153,7 +176,7 @@ const App: React.FC = () => {
             case RealEstateStatus.ESCROW:
                  return <EscrowDashboard listing={listing} />;
             case RealEstateStatus.DOCUMENTS:
-                return <DocumentVault listing={listing} onListingUpdate={handleListingUpdate} />;
+                return <DocumentVault listing={listing} onListingUpdate={handleListingUpdate} appLanguage={appLanguage} />;
             case RealEstateStatus.MAINTENANCE:
                 return <MaintenancePortal listing={listing} onListingUpdate={handleListingUpdate} />;
             case RealEstateStatus.LIFECYCLE:
@@ -218,25 +241,25 @@ const App: React.FC = () => {
                     </div>
                      <button onClick={() => setShowChat(true)} className="flex items-center gap-2 hover:text-brand-blue transition-colors">
                         <Shield className="w-4 h-4 text-brand-light" />
-                        <span>Closing War Room</span>
+                        <TranslatableText targetLanguage={appLanguage}>Closing War Room</TranslatableText>
                     </button>
                 </div>
             </header>
 
             <main className="grid grid-cols-12 gap-6 p-6 flex-grow">
                 <aside className="col-span-12 md:col-span-3 lg:col-span-2">
-                    <WorkflowStepper activeStep={activeStep} setActiveStep={setActiveStep} />
+                    <WorkflowStepper activeStep={activeStep} setActiveStep={setActiveStep} appLanguage={appLanguage} />
                 </aside>
                 <section className="col-span-12 md:col-span-9 lg:col-span-7">
                     {renderActiveStepComponent()}
                 </section>
                 <aside className="col-span-12 lg:col-span-3">
-                    <AiCopilot listing={listing} activeStep={activeStep} />
+                    <AiCopilot listing={listing} activeStep={activeStep} appLanguage={appLanguage} />
                 </aside>
             </main>
             
             <footer className="text-center p-4 border-t border-brand-accent text-xs text-brand-light">
-                &copy; 2024 SovereignRE. Property of Eric Daniel Malley, Radest Publishing Co. All Rights Reserved.
+                <TranslatableText targetLanguage={appLanguage}>&copy; 2024 SovereignRE. Property of Eric Daniel Malley, Radest Publishing Co. All Rights Reserved.</TranslatableText>
             </footer>
         </div>
     );
