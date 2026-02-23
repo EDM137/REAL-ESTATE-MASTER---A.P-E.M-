@@ -165,3 +165,11 @@ export interface ChatMessage {
     role: 'user' | 'model';
     content: string;
 }
+
+export interface BrandingConfig {
+    companyName: string;
+    userName: string;
+    logo?: string; // base64
+    theme: 'light' | 'dark';
+    primaryColor: string;
+}

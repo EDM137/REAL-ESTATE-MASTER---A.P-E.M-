@@ -4,8 +4,9 @@ import { Listing, RoomSpec } from '../types';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
-import { ChevronLeft, ChevronRight, Plus, Trash2, Building, Camera, UploadCloud, X, Map } from './ui/Icons';
+import { ChevronLeft, ChevronRight, Plus, Trash2, Building, Camera, UploadCloud, X, Map, Sparkles } from './ui/Icons';
 import { fileToDataUrl } from '../utils/file';
+import { GoogleGenAI } from '@google/genai';
 
 interface RoomSlideshowProps {
     listing: Listing;
@@ -14,8 +15,16 @@ interface RoomSlideshowProps {
 
 const RoomSlideshow: React.FC<RoomSlideshowProps> = ({ listing, onListingUpdate }) => {
     const [activeSlideIndex, setActiveSlideIndex] = useState(0);
+    const [isSmartFilling, setIsSmartFilling] = useState(false);
+    const [ai, setAi] = useState<GoogleGenAI | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const floorPlanInputRef = useRef<HTMLInputElement>(null);
+
+    React.useEffect(() => {
+        if (process.env.API_KEY) {
+            setAi(new GoogleGenAI({ apiKey: process.env.API_KEY }));
+        }
+    }, []);
 
     const activeSlide = listing.roomSpecs[activeSlideIndex];
 
@@ -117,6 +126,47 @@ const RoomSlideshow: React.FC<RoomSlideshowProps> = ({ listing, onListingUpdate 
         onListingUpdate({ ...listing, roomSpecs: updatedSpecs });
     };
 
+    const handleSmartFill = async () => {
+        if (!ai || !activeSlide) return;
+        setIsSmartFilling(true);
+        
+        const prompt = `Acting as a luxury real estate staging expert, provide detailed specifications for a room named "${activeSlide.roomName}" in a property at ${listing.address}.
+        
+        Current details: ${activeSlide.materials} ${activeSlide.notes}
+        
+        Provide the following in a concise format:
+        1. Recommended Materials & Finishes (flooring, lighting, wall treatments).
+        2. Staging Notes & Functional Description (how to best showcase the space).
+        3. Typical Ceiling Height (ft) and Window Count for this type of room.
+        
+        Keep it professional and high-end.`;
+
+        try {
+            const result = await ai.models.generateContent({
+                model: 'gemini-3-flash-preview',
+                contents: prompt,
+            });
+            
+            if (result.text) {
+                // Simple parsing or just append to notes for now to keep it easy
+                const updatedSpecs = listing.roomSpecs.map((spec, index) => {
+                    if (index === activeSlideIndex) {
+                        return { 
+                            ...spec, 
+                            notes: `${spec.notes}\n\nAI SUGGESTIONS:\n${result.text}`.trim()
+                        };
+                    }
+                    return spec;
+                });
+                onListingUpdate({ ...listing, roomSpecs: updatedSpecs });
+            }
+        } catch (error) {
+            console.error("Smart Fill Error:", error);
+        } finally {
+            setIsSmartFilling(false);
+        }
+    };
+
     return (
         <Card className="animate-fade-in">
             <Card.Header>
@@ -139,10 +189,28 @@ const RoomSlideshow: React.FC<RoomSlideshowProps> = ({ listing, onListingUpdate 
                         <div className="space-y-6">
                             {/* Header Row */}
                             <div className="flex justify-between items-center border-b border-brand-accent pb-4">
-                                <Input label="Room Name" name="roomName" value={activeSlide.roomName} onChange={handleInputChange} className="text-xl font-bold" />
-                                <Button onClick={() => handleRemoveSlide(activeSlide.id)} size="icon" variant="destructive" disabled={listing.roomSpecs.length <= 1}>
-                                    <Trash2 className="w-4 h-4" />
-                                </Button>
+                                <div className="flex-grow mr-4">
+                                    <Input label="Room Name" name="roomName" value={activeSlide.roomName} onChange={handleInputChange} className="text-xl font-bold" />
+                                </div>
+                                <div className="flex gap-2">
+                                    <Button 
+                                        size="sm" 
+                                        variant="outline" 
+                                        onClick={handleSmartFill} 
+                                        disabled={isSmartFilling || !ai}
+                                        className="bg-brand-blue/10 text-brand-blue border-brand-blue/30"
+                                    >
+                                        {isSmartFilling ? (
+                                            <RefreshCw className="w-4 h-4 animate-spin" />
+                                        ) : (
+                                            <Sparkles className="w-4 h-4 mr-2" />
+                                        )}
+                                        Smart Fill
+                                    </Button>
+                                    <Button onClick={() => handleRemoveSlide(activeSlide.id)} size="icon" variant="destructive" disabled={listing.roomSpecs.length <= 1}>
+                                        <Trash2 className="w-4 h-4" />
+                                    </Button>
+                                </div>
                             </div>
 
                             {/* Dimensions & Lighting Section */}

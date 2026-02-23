@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Listing, RealEstateStatus } from './types';
+import { Listing, RealEstateStatus, BrandingConfig } from './types';
 import WorkflowStepper from './components/WorkflowStepper';
 import AiCopilot from './components/AiCopilot';
 import TermsModal from './components/TermsModal';
@@ -19,9 +19,11 @@ import ClosingDashboard from './components/ClosingDashboard';
 import PlotPlanEditor from './components/PlotPlanEditor';
 import PetTracker from './components/PetTracker';
 import MaintenancePortal from './components/MaintenancePortal';
-import { Home, Shield, Sun, FileText, Wrench } from './components/ui/Icons';
+import BrandingSettings from './components/BrandingSettings';
+import { Home, Shield, Sun, FileText, Wrench, Settings, User } from './components/ui/Icons';
 
 const mockListing: Listing = {
+// ... existing mockListing ...
     id: 'MLS-20240801',
     address: '456 Sovereign Ave, Real Estate City, 67890',
     price: 750000,
@@ -64,6 +66,47 @@ const App: React.FC = () => {
     const [activeStep, setActiveStep] = useState<RealEstateStatus>(RealEstateStatus.LISTING);
     const [showTerms, setShowTerms] = useState(false);
     const [showChat, setShowChat] = useState(false);
+    const [showBranding, setShowBranding] = useState(false);
+    const [branding, setBranding] = useState<BrandingConfig>({
+        companyName: 'SovereignRE',
+        userName: 'Jane Doe',
+        theme: 'dark',
+        primaryColor: '#3B82F6'
+    });
+
+    useEffect(() => {
+        const savedBranding = localStorage.getItem('brandingConfig');
+        if (savedBranding) {
+            try {
+                setBranding(JSON.parse(savedBranding));
+            } catch (e) {
+                console.error("Failed to parse branding:", e);
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem('brandingConfig', JSON.stringify(branding));
+        
+        // Apply Theme
+        if (branding.theme === 'light') {
+            document.documentElement.style.setProperty('--brand-primary', '#F8FAFC');
+            document.documentElement.style.setProperty('--brand-secondary', '#FFFFFF');
+            document.documentElement.style.setProperty('--brand-accent', '#E2E8F0');
+            document.documentElement.style.setProperty('--brand-light', '#64748B');
+            document.documentElement.style.setProperty('--brand-highlight', '#0F172A');
+            document.body.classList.remove('bg-brand-primary', 'text-brand-highlight');
+            document.body.classList.add('bg-slate-50', 'text-slate-900');
+        } else {
+            document.documentElement.style.setProperty('--brand-primary', '#0D1B2A');
+            document.documentElement.style.setProperty('--brand-secondary', '#1B263B');
+            document.documentElement.style.setProperty('--brand-accent', '#415A77');
+            document.documentElement.style.setProperty('--brand-light', '#778DA9');
+            document.documentElement.style.setProperty('--brand-highlight', '#E0E1DD');
+            document.body.classList.remove('bg-slate-50', 'text-slate-900');
+            document.body.classList.add('bg-brand-primary', 'text-brand-highlight');
+        }
+    }, [branding]);
 
     useEffect(() => {
         const termsAccepted = localStorage.getItem('termsAccepted');
@@ -136,14 +179,40 @@ const App: React.FC = () => {
         <div className="min-h-screen bg-brand-primary font-sans flex flex-col">
             {showTerms && <TermsModal onAccept={handleAcceptTerms} />}
             {showChat && <SecureChat listing={listing} onListingUpdate={handleListingUpdate} onClose={() => setShowChat(false)} />}
+            {showBranding && (
+                <BrandingSettings 
+                    config={branding} 
+                    onUpdate={setBranding} 
+                    onClose={() => setShowBranding(false)} 
+                />
+            )}
 
             <header className="bg-brand-secondary/50 backdrop-blur-sm p-4 border-b border-brand-accent flex justify-between items-center sticky top-0 z-20">
                 <div className="flex items-center gap-3">
-                    <Home className="w-8 h-8 text-brand-blue" />
-                    <h1 className="text-2xl font-bold text-brand-highlight">Sovereign<span className="font-light text-brand-light">RE</span></h1>
+                    {branding.logo ? (
+                        <img src={branding.logo} alt="Logo" className="w-10 h-10 object-contain rounded" />
+                    ) : (
+                        <Home className="w-8 h-8 text-brand-blue" />
+                    )}
+                    <div>
+                        <h1 className="text-2xl font-bold text-brand-highlight">
+                            {branding.companyName.split(' ')[0]}
+                            <span className="font-light text-brand-light">{branding.companyName.split(' ').slice(1).join(' ')}</span>
+                        </h1>
+                        <p className="text-[10px] text-brand-light uppercase tracking-widest font-bold flex items-center gap-1">
+                            <User className="w-2 h-2" /> {branding.userName}
+                        </p>
+                    </div>
                 </div>
                 <div className="flex items-center gap-4 text-sm">
-                    <div className="flex items-center gap-2">
+                    <button 
+                        onClick={() => setShowBranding(true)}
+                        className="p-2 hover:bg-brand-accent/20 rounded-full transition-colors group"
+                        title="Branding & Settings"
+                    >
+                        <Settings className="w-5 h-5 text-brand-light group-hover:text-brand-blue group-hover:rotate-90 transition-all duration-300" />
+                    </button>
+                    <div className="hidden md:flex items-center gap-2">
                        <FileText className="w-4 h-4 text-brand-light" />
                        <span>MLS ID: {listing.id}</span>
                     </div>

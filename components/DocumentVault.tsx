@@ -32,12 +32,14 @@ const ScannerInterface: React.FC<{ onSave: (doc: RealEstateDocument) => void; on
     const [isEnhanced, setIsEnhanced] = useState(false);
     const [docName, setDocName] = useState('Scanned Document');
     const [docType, setDocType] = useState<string>('Other');
+    const [facingMode, setFacingMode] = useState<'user' | 'environment'>('environment');
     const videoRef = useRef<HTMLVideoElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     const startCamera = async () => {
+        stopCamera(); // Stop any existing stream first
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facingMode } });
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
             }
@@ -59,7 +61,7 @@ const ScannerInterface: React.FC<{ onSave: (doc: RealEstateDocument) => void; on
             startCamera();
         }
         return () => stopCamera();
-    }, [step]);
+    }, [step, facingMode]);
 
     const handleCapture = () => {
         if (videoRef.current && canvasRef.current) {
@@ -134,6 +136,13 @@ const ScannerInterface: React.FC<{ onSave: (doc: RealEstateDocument) => void; on
                         <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
                         <canvas ref={canvasRef} className="hidden" />
                         
+                        {/* Camera Controls */}
+                        <div className="absolute top-4 right-4 flex flex-col gap-2 z-10">
+                            <Button size="icon" variant="secondary" onClick={() => setFacingMode(prev => prev === 'user' ? 'environment' : 'user')} title="Switch Camera">
+                                <RefreshCw className="w-4 h-4" />
+                            </Button>
+                        </div>
+
                         {/* Guidance Frame */}
                         <div className="absolute inset-8 border-2 border-brand-blue/50 rounded-lg pointer-events-none flex flex-col justify-between p-2">
                             <div className="flex justify-between">

@@ -6,6 +6,7 @@ import { Input } from './ui/Input';
 import { Home, Camera, UploadCloud, Trash2, Plus, Sparkles, X, RefreshCw, MapPin, Database, Image as ImageIcon } from './ui/Icons';
 import { GoogleGenAI } from '@google/genai';
 import PhotoCarousel from './PhotoCarousel';
+import CameraCapture from './CameraCapture';
 
 interface ListingComposerProps {
     listing: Listing;
@@ -20,6 +21,7 @@ const ListingComposer: React.FC<ListingComposerProps> = ({ listing, onListingUpd
     const [previewImage, setPreviewImage] = useState<string | null>(null);
     const [draftSaved, setDraftSaved] = useState(false);
     const [isAutoFilling, setIsAutoFilling] = useState(false);
+    const [showCamera, setShowCamera] = useState(false);
     
     // AI State
     const [isEnhancing, setIsEnhancing] = useState(false);
@@ -192,6 +194,13 @@ const ListingComposer: React.FC<ListingComposerProps> = ({ listing, onListingUpd
         onListingUpdate({ ...listing, photos: updatedPhotos });
     };
 
+    const handleCapturePhoto = (imageData: string) => {
+        onListingUpdate({
+            ...listing,
+            photos: [...listing.photos, imageData]
+        });
+    };
+
     const triggerReplace = (index: number, e: React.MouseEvent) => {
         e.stopPropagation();
         setReplaceIndex(index);
@@ -302,9 +311,14 @@ const ListingComposer: React.FC<ListingComposerProps> = ({ listing, onListingUpd
                 </div>
 
                 <div>
-                    <div className="flex items-center gap-2 mb-3 border-b border-brand-accent pb-2">
-                        <ImageIcon className="w-5 h-5 text-brand-blue" />
-                        <h3 className="text-lg font-semibold text-brand-light">Media Gallery</h3>
+                    <div className="flex items-center justify-between mb-3 border-b border-brand-accent pb-2">
+                        <div className="flex items-center gap-2">
+                            <ImageIcon className="w-5 h-5 text-brand-blue" />
+                            <h3 className="text-lg font-semibold text-brand-light">Media Gallery</h3>
+                        </div>
+                        <Button size="sm" variant="outline" onClick={() => setShowCamera(true)}>
+                            <Camera className="w-4 h-4 mr-2" /> Capture
+                        </Button>
                     </div>
                     
                     {listing.photos.length > 0 && (
@@ -365,6 +379,14 @@ const ListingComposer: React.FC<ListingComposerProps> = ({ listing, onListingUpd
                         </button>
                     </div>
                 </div>
+            )}
+
+            {showCamera && (
+                <CameraCapture 
+                    onCapture={handleCapturePhoto}
+                    onClose={() => setShowCamera(false)}
+                    title="Listing Photo Capture"
+                />
             )}
         </Card>
     );

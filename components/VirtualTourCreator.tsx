@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Listing } from '../types';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
-import { Film, Video, Plus, Trash2, Play, Pause, CheckCircle } from './ui/Icons';
+import { Film, Video, Plus, Trash2, Play, Pause, CheckCircle, RefreshCw } from './ui/Icons';
 
 interface VirtualTourCreatorProps {
     listing: Listing;
@@ -21,13 +21,14 @@ const VirtualTourCreator: React.FC<VirtualTourCreatorProps> = ({ listing }) => {
     const [selectedRoom, setSelectedRoom] = useState<string>(listing.roomSpecs[0]?.roomName || 'General');
     const [clips, setClips] = useState<VideoClip[]>([]);
     const [recordingTime, setRecordingTime] = useState(0);
+    const [facingMode, setFacingMode] = useState<'user' | 'environment'>('environment');
     const videoRef = useRef<HTMLVideoElement>(null);
     const streamRef = useRef<MediaStream | null>(null);
 
     useEffect(() => {
         startCamera();
         return () => stopCamera();
-    }, []);
+    }, [facingMode]);
 
     useEffect(() => {
         let interval: any;
@@ -40,8 +41,12 @@ const VirtualTourCreator: React.FC<VirtualTourCreatorProps> = ({ listing }) => {
     }, [isRecording]);
 
     const startCamera = async () => {
+        stopCamera();
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            const stream = await navigator.mediaDevices.getUserMedia({ 
+                video: { facingMode: facingMode }, 
+                audio: true 
+            });
             streamRef.current = stream;
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
@@ -100,17 +105,29 @@ const VirtualTourCreator: React.FC<VirtualTourCreatorProps> = ({ listing }) => {
                                     <div className={`w-2 h-2 rounded-full ${isRecording ? 'bg-red-500 animate-pulse' : 'bg-green-500'}`}></div>
                                     {isRecording ? 'REC' : 'STANDBY'} {isRecording && <span>{new Date(recordingTime * 1000).toISOString().substr(14, 5)}</span>}
                                 </div>
-                                <select 
-                                    className="bg-black/50 text-white text-xs border border-white/20 rounded p-1"
-                                    value={selectedRoom}
-                                    onChange={(e) => setSelectedRoom(e.target.value)}
-                                >
-                                    {listing.roomSpecs.map(room => (
-                                        <option key={room.id} value={room.roomName}>{room.roomName}</option>
-                                    ))}
-                                    <option value="Exterior">Exterior</option>
-                                    <option value="General">General</option>
-                                </select>
+                                <div className="flex gap-2">
+                                    <Button 
+                                        size="icon" 
+                                        variant="secondary" 
+                                        className="bg-black/50 border-none h-8 w-8"
+                                        onClick={() => setFacingMode(prev => prev === 'user' ? 'environment' : 'user')}
+                                        disabled={isRecording}
+                                        title="Switch Camera"
+                                    >
+                                        <RefreshCw className="w-4 h-4 text-white" />
+                                    </Button>
+                                    <select 
+                                        className="bg-black/50 text-white text-xs border border-white/20 rounded p-1"
+                                        value={selectedRoom}
+                                        onChange={(e) => setSelectedRoom(e.target.value)}
+                                    >
+                                        {listing.roomSpecs.map(room => (
+                                            <option key={room.id} value={room.roomName}>{room.roomName}</option>
+                                        ))}
+                                        <option value="Exterior">Exterior</option>
+                                        <option value="General">General</option>
+                                    </select>
+                                </div>
                             </div>
                             
                             <div className="flex justify-center">
