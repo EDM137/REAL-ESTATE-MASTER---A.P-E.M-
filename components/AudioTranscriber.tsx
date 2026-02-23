@@ -1,7 +1,6 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from './ui/Button';
-import { Mic } from './ui/Icons';
+import { Mic, Activity, Zap } from './ui/Icons';
 import { encode, decode, decodeAudioData } from '../utils/audio';
 import { GoogleGenAI, LiveServerMessage, Modality, Blob as GenaiBlob } from '@google/genai';
 
@@ -64,7 +63,7 @@ const AudioTranscriber: React.FC = () => {
                         console.debug("Live session opened");
                     },
                     onmessage: async (message: LiveServerMessage) => {
-                        const inputTranscript = message.serverContent?.inputTranscription;
+                        const inputTranscript = message.serverContent?.inputTranscription as any;
                         if (inputTranscript) {
                             if (inputTranscript.isFinal) {
                                 finalTranscriptionRef.current += inputTranscript.text + ' ';
@@ -74,7 +73,7 @@ const AudioTranscriber: React.FC = () => {
                             }
                         }
 
-                        const outputTranscript = message.serverContent?.outputTranscription;
+                        const outputTranscript = message.serverContent?.outputTranscription as any;
                         if (outputTranscript) {
                              if (outputTranscript.isFinal) {
                                 finalTranslationRef.current += outputTranscript.text + ' ';
@@ -128,13 +127,13 @@ const AudioTranscriber: React.FC = () => {
                     },
                     inputAudioTranscription: {},
                     outputAudioTranscription: {},
-                    systemInstruction: `You are a professional, high-fidelity real-time interpreter. 
+                    systemInstruction: `You are Kindra, a professional, high-fidelity real-time interpreter for SovereignRE.
                     - Listen to input audio and detect the language.
                     - Translate immediately into English.
-                    - VOCAL STYLE: Speak with an extremely natural, human-like voice. Incorporate subtle breathing sounds between long phrases. 
-                    - Use natural micro-pauses and varying pitch to reflect organic thinking patterns. 
-                    - Use a conversational, "settled" delivery. Occasionally add brief 'um' or 'hm' if the translation is complex, to simulate human cognition.
-                    - Avoid robotic cadence at all costs.`,
+                    - VOCAL STYLE: Maintain a calm, professional, and helpful tone.
+                    - Speak clearly and at a regular pace.
+                    - Do NOT sound strained or panicked.
+                    - Be helpful and accurate in your translations.`,
                 },
             });
             
@@ -202,23 +201,45 @@ const AudioTranscriber: React.FC = () => {
                 disabled={!ai}
             >
                 <Mic className={`w-5 h-5 mr-2 ${isRecording ? 'animate-pulse' : ''}`} />
-                {isRecording ? 'Stop Interpreter' : 'Start Live Translator'}
+                {isRecording ? 'Stop Interpreter' : 'Ignite Kindra Voice Interpreter'}
             </Button>
             
             <div className="space-y-2">
-                <div className="p-3 bg-brand-secondary rounded-lg min-h-[60px] text-left text-sm border border-brand-accent/50">
-                    <span className="text-[10px] text-brand-light block mb-1 uppercase tracking-widest font-bold">Detected Speech (Source):</span>
-                    {transcription || <span className="text-brand-light italic opacity-50">Listening...</span>}
+                <div className="p-3 bg-brand-secondary rounded-lg min-h-[60px] text-left text-sm border border-brand-accent/50 relative overflow-hidden">
+                    {isRecording && <div className="absolute top-0 left-0 w-full h-0.5 bg-brand-blue/30 animate-pulse"></div>}
+                    <span className="text-[10px] text-brand-light block mb-1 uppercase tracking-widest font-bold flex items-center gap-2">
+                        <Activity className="w-3 h-3 text-brand-blue" />
+                        Source Audio:
+                    </span>
+                    {transcription || <span className="text-brand-light italic opacity-50">Awaiting input...</span>}
                 </div>
                 
-                <div className="p-3 bg-brand-blue/10 border border-brand-blue/30 rounded-lg min-h-[60px] text-left text-sm">
-                     <span className="text-[10px] text-brand-blue block mb-1 uppercase tracking-widest font-bold">English Interpretation:</span>
-                    {translation || <span className="text-brand-blue/50 italic">AI will speak and translate here...</span>}
+                <div className="p-3 bg-brand-blue/10 border border-brand-blue/30 rounded-lg min-h-[60px] text-left text-sm relative">
+                     <span className="text-[10px] text-brand-blue block mb-1 uppercase tracking-widest font-bold flex items-center gap-2">
+                        <Zap className="w-3 h-3" />
+                        Kindra's English Interpretation:
+                    </span>
+                    {translation || <span className="text-brand-blue/50 italic">Kindra is listening...</span>}
                 </div>
             </div>
             
-            <p className="text-[10px] text-brand-light italic">
-                Sovereign-Grade AI Voice: Natural Prosody & Breathing Enabled
+            <div className="flex justify-center items-center gap-4 py-1">
+                <div className="flex items-center gap-1.5">
+                    <div className={`w-1.5 h-1.5 rounded-full ${isRecording ? 'bg-brand-green animate-pulse' : 'bg-gray-600'}`}></div>
+                    <span className="text-[9px] uppercase tracking-tighter text-brand-light">Voice Sync</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                    <div className={`w-1.5 h-1.5 rounded-full ${isRecording ? 'bg-brand-yellow animate-pulse' : 'bg-gray-600'}`}></div>
+                    <span className="text-[9px] uppercase tracking-tighter text-brand-light">Processing</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                    <div className={`w-1.5 h-1.5 rounded-full ${isRecording ? 'bg-brand-blue animate-pulse' : 'bg-gray-600'}`}></div>
+                    <span className="text-[9px] uppercase tracking-tighter text-brand-light">Active</span>
+                </div>
+            </div>
+            
+            <p className="text-[10px] text-brand-light italic font-serif">
+                Sovereign Bio-Performance Suite • Eric Daniel Malley IP
             </p>
             
             {error && <p className="text-sm text-red-400 bg-red-500/10 p-2 rounded-md border border-red-500/30">{error}</p>}

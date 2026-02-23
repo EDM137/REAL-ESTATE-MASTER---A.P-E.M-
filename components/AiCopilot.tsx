@@ -17,16 +17,16 @@ interface AiCopilotProps {
     activeStep: RealEstateStatus;
 }
 
-type ToolName = 'Assistant' | 'Chat' | 'Image Gen' | 'Analyze Image' | 'Transcribe' | 'Search' | 'TTS' | 'Translate';
+type ToolName = 'Assistant' | 'Chat' | 'Image Gen' | 'Analyze Image' | 'Kindra Live' | 'Search' | 'Kindra Voice' | 'Translate';
 
 const tools: { name: ToolName; icon: React.ReactNode }[] = [
     { name: 'Assistant', icon: <Sparkles className="w-5 h-5" /> },
     { name: 'Chat', icon: <MessageSquare className="w-5 h-5" /> },
     { name: 'Image Gen', icon: <Image className="w-5 h-5" /> },
     { name: 'Analyze Image', icon: <UploadCloud className="w-5 h-5" /> },
-    { name: 'Transcribe', icon: <Mic className="w-5 h-5" /> },
+    { name: 'Kindra Live', icon: <Mic className="w-5 h-5" /> },
     { name: 'Search', icon: <Globe className="w-5 h-5" /> },
-    { name: 'TTS', icon: <Volume2 className="w-5 h-5" /> },
+    { name: 'Kindra Voice', icon: <Volume2 className="w-5 h-5" /> },
     { name: 'Translate', icon: <Languages className="w-5 h-5" /> },
 ];
 
@@ -44,11 +44,11 @@ const AiCopilot: React.FC<AiCopilotProps> = ({ listing, activeStep }) => {
                 return <ImageGenerator />;
             case 'Analyze Image':
                 return <ImageAnalyzer />;
-            case 'Transcribe':
+            case 'Kindra Live':
                 return <AudioTranscriber />;
             case 'Search':
                 return <GroundedSearch />;
-            case 'TTS':
+            case 'Kindra Voice':
                 return <TextToSpeech />;
             case 'Translate':
                 return <Translator />;

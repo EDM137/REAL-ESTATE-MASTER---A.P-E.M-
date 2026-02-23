@@ -174,7 +174,7 @@ const PetTracker: React.FC = () => {
                         {packets.map((pkt, i) => (
                             <div key={i} className="flex justify-between animate-fade-in">
                                 <span>PKT-{pkt}</span>
-                                <span className="text-brand-blue">REFRACTED >> {['CELL','WIFI','BLE'][i%3]}</span>
+                                <span className="text-brand-blue">REFRACTED {">>" } {['CELL','WIFI','BLE'][i%3]}</span>
                             </div>
                         ))}
                         {!isTransmitting && <span className="text-gray-500 italic">Transmission Idle...</span>}

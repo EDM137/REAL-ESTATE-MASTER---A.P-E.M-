@@ -254,7 +254,7 @@ const SecureChat: React.FC<SecureChatProps> = ({ listing, onListingUpdate, onClo
                             <div className="flex justify-between items-center mb-4 border-b border-brand-accent pb-2">
                                 <h4 className="font-bold text-brand-highlight flex items-center gap-2">
                                     <Languages className="w-4 h-4 text-brand-blue" />
-                                    Live Interpreter
+                                    Kindra Live Interpreter
                                 </h4>
                                 <button onClick={() => setShowVoiceInterpreter(false)} className="text-brand-light hover:text-white">
                                     <X className="w-4 h-4" />

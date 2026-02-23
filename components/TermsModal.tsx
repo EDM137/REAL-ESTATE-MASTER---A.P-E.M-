@@ -17,13 +17,14 @@ const TermsModal: React.FC<TermsModalProps> = ({ onAccept }) => {
                 <Card.Content className="max-h-[60vh] overflow-y-auto text-sm space-y-4">
                     <div className="space-y-2">
                         <h3 className="font-semibold text-brand-highlight">1. Application Access & Device Permissions</h3>
-                        <p className="text-brand-light">By using this application, you explicitly consent to provide access to your device's <strong>Camera, Microphone, and Geolocation services</strong>. This access is essential for:
-                        <ul className="list-disc ml-5 mt-1">
-                            <li>Documenting job sites and creating Virtual Tours.</li>
-                            <li>Enabling secure video conferencing and "on hold" interactions.</li>
-                            <li>Verifying property location for maps and scheduling.</li>
-                        </ul>
-                        </p>
+                        <div className="text-brand-light">
+                            <p>By using this application, you explicitly consent to provide access to your device's <strong>Camera, Microphone, and Geolocation services</strong>. This access is essential for:</p>
+                            <ul className="list-disc ml-5 mt-1">
+                                <li>Documenting job sites and creating Virtual Tours.</li>
+                                <li>Enabling secure video conferencing and "on hold" interactions.</li>
+                                <li>Verifying property location for maps and scheduling.</li>
+                            </ul>
+                        </div>
                     </div>
                     <div className="space-y-2">
                         <h3 className="font-semibold text-brand-highlight">2. Secure Communication & Privacy Policy</h3>

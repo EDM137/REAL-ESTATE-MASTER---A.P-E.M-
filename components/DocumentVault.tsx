@@ -412,27 +412,58 @@ const DocumentVault: React.FC<DocumentVaultProps> = ({ listing, onListingUpdate 
     };
 
     const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (!file) return;
+        const files = event.target.files;
+        if (!files || files.length === 0) return;
+        
         setIsUploading(true);
         try {
-            const data = await fileToDataUrl(file);
-            const newDoc: RealEstateDocument = {
-                id: `doc-${Date.now()}`,
-                name: file.name,
-                type: 'Other',
-                data,
-                uploadedAt: new Date().toISOString(),
-                status: 'Signed', // Uploads usually static
-                certified: true
-            };
-            onListingUpdate({ ...listing, documents: [...listing.documents, newDoc] });
+            const newDocs: RealEstateDocument[] = [];
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const data = await fileToDataUrl(file);
+                newDocs.push({
+                    id: `doc-${Date.now()}-${i}`,
+                    name: file.name,
+                    type: 'Other',
+                    data,
+                    uploadedAt: new Date().toISOString(),
+                    status: 'Signed',
+                    certified: true
+                });
+            }
+            onListingUpdate({ ...listing, documents: [...listing.documents, ...newDocs] });
         } catch (error) {
-            console.error(error);
+            console.error("Upload failed:", error);
+            alert("Failed to upload one or more documents.");
         } finally {
             setIsUploading(false);
             event.target.value = '';
         }
+    };
+
+    const handleDownload = (doc: RealEstateDocument) => {
+        if (doc.data) {
+            const link = document.createElement('a');
+            link.href = doc.data;
+            link.download = doc.name;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } else if (doc.content) {
+            const blob = new Blob([doc.content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${doc.name}.txt`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+    };
+
+    const handleDownloadAll = () => {
+        listing.documents.forEach(doc => handleDownload(doc));
     };
 
     const handleScanSave = (newDoc: RealEstateDocument) => {
@@ -751,24 +782,31 @@ const DocumentVault: React.FC<DocumentVaultProps> = ({ listing, onListingUpdate 
             )}
             
             <Card.Header>
-                 <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                        <FileSignature className="w-6 h-6 text-brand-blue" />
-                        <div>
-                            <Card.Title>Document Vault & Collaboration</Card.Title>
-                            <Card.Description>Create, Edit, Share, and Sign Certified Documents.</Card.Description>
+                    <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                            <FileSignature className="w-6 h-6 text-brand-blue" />
+                            <div>
+                                <Card.Title>Document Vault & Collaboration</Card.Title>
+                                <Card.Description>Create, Edit, Share, and Sign Certified Documents. Unlimited Sovereign Storage Enabled.</Card.Description>
+                            </div>
                         </div>
-                    </div>
                     <div className="flex gap-2">
-                         <input type="file" ref={fileInputRef} onChange={handleFileUpload} className="hidden" />
+                         <input type="file" ref={fileInputRef} onChange={handleFileUpload} multiple className="hidden" />
                          
                          <Button variant="outline" size="sm" onClick={() => setIsScanning(true)}>
                              <Camera className="w-4 h-4 mr-2" /> Scan Doc
                          </Button>
 
                          <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
-                            <UploadCloud className="w-4 h-4 mr-2" /> Upload PDF
+                            <UploadCloud className="w-4 h-4 mr-2" /> Upload Any File
                         </Button>
+                        
+                        {listing.documents.length > 0 && (
+                            <Button variant="outline" size="sm" onClick={handleDownloadAll}>
+                                <Download className="w-4 h-4 mr-2" /> Download All
+                            </Button>
+                        )}
+
                         <Button size="sm" onClick={() => setView('create')}>
                             <Plus className="w-4 h-4 mr-2" /> New Document
                         </Button>
@@ -831,13 +869,9 @@ const DocumentVault: React.FC<DocumentVaultProps> = ({ listing, onListingUpdate 
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    {doc.data && (
-                                         <a href={doc.data} download={doc.name} onClick={(e) => e.stopPropagation()}>
-                                            <Button size="icon" variant="outline" title="Download">
-                                                <Download className="w-4 h-4" />
-                                            </Button>
-                                        </a>
-                                    )}
+                                    <Button size="icon" variant="outline" onClick={(e) => { e.stopPropagation(); handleDownload(doc); }} title="Download">
+                                        <Download className="w-4 h-4" />
+                                    </Button>
                                     <Button size="icon" variant="destructive" onClick={(e) => handleDelete(doc.id, e)} title="Delete">
                                         <Trash2 className="w-4 h-4" />
                                     </Button>

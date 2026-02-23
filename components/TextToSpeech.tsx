@@ -48,6 +48,7 @@ const TextToSpeech: React.FC = () => {
                     speechConfig: {
                         voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } },
                     },
+                    systemInstruction: "You are Kindra, a professional AI assistant. Speak clearly, calmly, and professionally.",
                 },
             });
             
@@ -76,14 +77,14 @@ const TextToSpeech: React.FC = () => {
             <textarea
                 value={text}
                 onChange={(e) => setText(e.target.value)}
-                placeholder="Enter text to convert to speech..."
+                placeholder="Enter text for Kindra to speak..."
                 rows={5}
                 className="w-full bg-brand-secondary border border-brand-accent rounded-md p-2 text-sm text-brand-highlight focus:ring-2 focus:ring-brand-blue focus:border-brand-blue transition-shadow"
                 disabled={isLoading}
             />
             <Button onClick={handleGenerateAndPlay} disabled={isLoading || !text.trim() || !ai} className="w-full">
                 <Volume2 className="w-4 h-4 mr-2" />
-                {isLoading ? 'Generating...' : 'Generate & Play Audio'}
+                {isLoading ? 'Kindra is thinking...' : 'Speak with Kindra'}
             </Button>
             {error && <p className="text-sm text-red-400 bg-red-500/10 p-2 rounded-md">{error}</p>}
         </div>
