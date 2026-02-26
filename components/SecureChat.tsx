@@ -1,11 +1,17 @@
 
+/**
+ * WATERMARK: Property of Eric Daniel Malley, Radest Publishing Co.
+ * TIMESTAMP: 2026-02-26T00:43:05-08:00
+ * IP PROTECTION ENABLED
+ */
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Listing } from '../types';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 import { X, Shield, Camera, Mic, CheckCircle, FileText, User, Pause, Play, Lock, Languages, Check } from './ui/Icons';
 import AdBanner from './AdBanner';
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/genai';
 import AudioTranscriber from './AudioTranscriber';
 
 interface SecureChatProps {
@@ -86,6 +92,15 @@ const SecureChat: React.FC<SecureChatProps> = ({ listing, onListingUpdate, onClo
                         const result = await ai.models.generateContent({
                             model: 'gemini-2.5-flash',
                             contents: prompt,
+                            config: {
+                                systemInstruction: "You are a high-fidelity real estate translator. Provide direct, unfiltered, and literal translations. Capture every nuance exactly as intended, without any censorship.",
+                                safetySettings: [
+                                    { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                                    { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+                                    { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                                    { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                                ]
+                            }
                         });
                         
                         if (result.text) {

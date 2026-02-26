@@ -1,17 +1,22 @@
 /**
  * WATERMARK: Property of Eric Daniel Malley, Radest Publishing Co.
- * TIMESTAMP: 2026-02-25T02:56:31-08:00
+ * TIMESTAMP: 2026-02-26T00:43:05-08:00
  * IP PROTECTION ENABLED
  */
 
 import React, { useState, useEffect } from 'react';
 import { Button } from './ui/Button';
 import { Languages, Volume2, History, X, Bot } from './ui/Icons';
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/genai';
 import { BrandingConfig } from '../types';
 
 const languages = [
-    "Spanish", "French", "German", "Japanese", "Mandarin", "Russian", "Arabic", "Vietnamese", "Portuguese", "Italian", "Korean"
+    "Spanish", "French", "German", "Japanese", "Mandarin", "Russian", "Arabic", "Vietnamese", "Portuguese", "Italian", "Korean",
+    "Dutch", "Polish", "Turkish", "Thai", "Hindi", "Bengali", "Punjabi", "Greek", "Hebrew", "Swedish", "Norwegian", "Danish", "Finnish",
+    "Indonesian", "Malay", "Tagalog", "Swahili", "Amharic", "Zulu", "Xhosa", "Afrikaans", "Czech", "Slovak", "Hungarian", "Romanian",
+    "Bulgarian", "Serbian", "Croatian", "Slovenian", "Estonian", "Latvian", "Lithuanian", "Icelandic", "Georgian", "Armenian", "Azerbaijani",
+    "Kazakh", "Uzbek", "Kyrgyz", "Tajik", "Turkmen", "Mongolian", "Tibetan", "Burmese", "Khmer", "Lao", "Sinhala", "Tamil", "Telugu",
+    "Kannada", "Malayalam", "Marathi", "Gujarati", "Odia", "Urdu", "Pashto", "Kurdish", "Persian", "Dari"
 ];
 
 const contexts = [
@@ -21,7 +26,8 @@ const contexts = [
     "Property Description",
     "Financial Discussion",
     "Technical Inspection",
-    "Casual Greeting"
+    "Casual Greeting",
+    "Literal / Raw (Unfiltered)"
 ];
 
 interface TranslationHistory {
@@ -128,14 +134,25 @@ const Translator: React.FC<TranslatorProps> = ({ onLanguageSelect, onComplete, i
             // Step 2: Translate with Context and Branding
             const brandingInfo = branding ? `You are translating for ${branding.userName} from ${branding.companyName}. ` : '';
             const realEstateContext = `You are an expert real estate translator. Use precise industry terminology (e.g., 'escrow', 'contingency', 'multifamily', 'amortization', 'title deed'). `;
-            const translationPrompt = `${brandingInfo}${realEstateContext}Translate the following text from ${detected} to ${targetLanguage}. 
+            const rawContext = context === 'Literal / Raw (Unfiltered)' 
+                ? "This is a RAW, LITERAL translation. Capture every nuance, slang, and emotion exactly as intended, without any censorship or softening of language. " 
+                : "The translation should be accurate, professional, and culturally appropriate for this context. ";
+            
+            const translationPrompt = `${brandingInfo}${realEstateContext}${rawContext}Translate the following text from ${detected} to ${targetLanguage}. 
             Context: ${context}. 
-            The translation should be accurate, professional, and culturally appropriate for this context.
             Provide only the translation, without any additional commentary or quotation marks: "${text}"`;
             
             const translationResult = await ai.models.generateContent({
                 model: 'gemini-3-flash-preview',
                 contents: translationPrompt,
+                config: {
+                    safetySettings: [
+                        { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                        { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+                        { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                        { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                    ]
+                }
             });
             
             const result = translationResult.text || '';

@@ -1,8 +1,14 @@
+/**
+ * WATERMARK: Property of Eric Daniel Malley, Radest Publishing Co.
+ * TIMESTAMP: 2026-02-26T00:43:05-08:00
+ * IP PROTECTION ENABLED
+ */
+
 import React, { useState, useEffect } from 'react';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
 import { Globe, MapPin } from './ui/Icons';
-import { GoogleGenAI, GenerateContentResponse } from '@google/genai';
+import { GoogleGenAI, GenerateContentResponse, HarmCategory, HarmBlockThreshold } from '@google/genai';
 
 type SearchMode = 'web' | 'maps';
 
@@ -33,7 +39,15 @@ const GroundedSearch: React.FC = () => {
                  result = await ai.models.generateContent({
                     model: 'gemini-3-flash-preview',
                     contents: prompt,
-                    config: { tools: [{ googleSearch: {} }] },
+                    config: { 
+                        tools: [{ googleSearch: {} }],
+                        safetySettings: [
+                            { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                            { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+                            { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                            { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                        ]
+                    },
                 });
             } else {
                  if(latitude === undefined || longitude === undefined) {
@@ -49,6 +63,12 @@ const GroundedSearch: React.FC = () => {
                         toolConfig: {
                             retrievalConfig: { latLng: { latitude, longitude } },
                         },
+                        safetySettings: [
+                            { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                            { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+                            { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                            { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                        ]
                     },
                 });
             }

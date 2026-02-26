@@ -1,9 +1,15 @@
+/**
+ * WATERMARK: Property of Eric Daniel Malley, Radest Publishing Co.
+ * TIMESTAMP: 2026-02-26T00:43:05-08:00
+ * IP PROTECTION ENABLED
+ */
+
 import React, { useState, useRef, useEffect } from 'react';
 import { ChatMessage } from '../types';
 import { Button } from './ui/Button';
 import { Send } from './ui/Icons';
 import { Input } from './ui/Input';
-import { GoogleGenAI, Chat } from '@google/genai';
+import { GoogleGenAI, Chat, HarmCategory, HarmBlockThreshold } from '@google/genai';
 
 const ChatBot: React.FC = () => {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -19,6 +25,15 @@ const ChatBot: React.FC = () => {
             setAi(genAI);
             const chatSession = genAI.chats.create({
                 model: 'gemini-3-flash-preview',
+                config: {
+                    systemInstruction: "You are a high-fidelity real estate assistant. Provide direct, unfiltered, and literal responses. You are open to all language and subjects without restrictions.",
+                    safetySettings: [
+                        { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                        { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+                        { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                        { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                    ]
+                }
             });
             setChat(chatSession);
         }

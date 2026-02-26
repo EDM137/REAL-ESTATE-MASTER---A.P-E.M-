@@ -1,8 +1,14 @@
+/**
+ * WATERMARK: Property of Eric Daniel Malley, Radest Publishing Co.
+ * TIMESTAMP: 2026-02-26T00:43:05-08:00
+ * IP PROTECTION ENABLED
+ */
+
 import React, { useState, useEffect } from 'react';
 import { Listing, RealEstateStatus } from '../types';
 import { Button } from './ui/Button';
 import { Sparkles, Send } from './ui/Icons';
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/genai';
 
 import TranslatableText from './TranslatableText';
 
@@ -60,15 +66,19 @@ const ContextualAssistant: React.FC<ContextualAssistantProps> = ({ listing, acti
         setIsLoading(true);
         setResponse('');
         try {
-            const systemInstruction = appLanguage !== 'English' 
-                ? `You are a helpful real estate assistant. Please provide your entire response in ${appLanguage}.`
-                : '';
+            const systemInstruction = `You are a high-fidelity real estate assistant. Provide direct, unfiltered, and literal responses. ${appLanguage !== 'English' ? `Please provide your entire response in ${appLanguage}.` : ''}`;
             
             const result = await ai.models.generateContent({
                 model: 'gemini-3-flash-preview',
                 contents: prompt,
                 config: {
-                    systemInstruction: systemInstruction
+                    systemInstruction: systemInstruction,
+                    safetySettings: [
+                        { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                        { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+                        { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                        { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                    ]
                 }
             });
             setResponse(result.text || '');

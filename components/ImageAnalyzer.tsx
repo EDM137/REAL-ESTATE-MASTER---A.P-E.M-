@@ -1,9 +1,15 @@
+/**
+ * WATERMARK: Property of Eric Daniel Malley, Radest Publishing Co.
+ * TIMESTAMP: 2026-02-26T00:43:05-08:00
+ * IP PROTECTION ENABLED
+ */
+
 import React, { useState, useRef, useEffect } from 'react';
 import { fileToBase64 } from '../utils/image';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
 import { UploadCloud, Send } from './ui/Icons';
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/genai';
 
 const ImageAnalyzer: React.FC = () => {
     const [prompt, setPrompt] = useState('');
@@ -60,6 +66,14 @@ const ImageAnalyzer: React.FC = () => {
             const result = await ai.models.generateContent({
                 model: 'gemini-3-flash-preview',
                 contents: { parts: [imagePart, textPart] },
+                config: {
+                    safetySettings: [
+                        { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                        { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+                        { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                        { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                    ]
+                }
             });
             setResponse(result.text || '');
         } catch (err) {
