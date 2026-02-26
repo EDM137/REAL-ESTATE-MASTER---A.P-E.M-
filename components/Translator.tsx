@@ -1,3 +1,9 @@
+/**
+ * WATERMARK: Property of Eric Daniel Malley, Radest Publishing Co.
+ * TIMESTAMP: 2026-02-25T02:56:31-08:00
+ * IP PROTECTION ENABLED
+ */
+
 import React, { useState, useEffect } from 'react';
 import { Button } from './ui/Button';
 import { Languages, Volume2, History, X, Bot } from './ui/Icons';
@@ -121,7 +127,8 @@ const Translator: React.FC<TranslatorProps> = ({ onLanguageSelect, onComplete, i
 
             // Step 2: Translate with Context and Branding
             const brandingInfo = branding ? `You are translating for ${branding.userName} from ${branding.companyName}. ` : '';
-            const translationPrompt = `${brandingInfo}Translate the following text from ${detected} to ${targetLanguage}. 
+            const realEstateContext = `You are an expert real estate translator. Use precise industry terminology (e.g., 'escrow', 'contingency', 'multifamily', 'amortization', 'title deed'). `;
+            const translationPrompt = `${brandingInfo}${realEstateContext}Translate the following text from ${detected} to ${targetLanguage}. 
             Context: ${context}. 
             The translation should be accurate, professional, and culturally appropriate for this context.
             Provide only the translation, without any additional commentary or quotation marks: "${text}"`;

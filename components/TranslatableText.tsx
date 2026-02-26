@@ -1,3 +1,9 @@
+/**
+ * WATERMARK: Property of Eric Daniel Malley, Radest Publishing Co.
+ * TIMESTAMP: 2026-02-25T02:56:31-08:00
+ * IP PROTECTION ENABLED
+ */
+
 import React, { useState, useEffect } from 'react';
 import { GoogleGenAI } from '@google/genai';
 

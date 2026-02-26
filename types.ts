@@ -1,4 +1,10 @@
 
+/**
+ * WATERMARK: Property of Eric Daniel Malley, Radest Publishing Co.
+ * TIMESTAMP: 2026-02-25T02:56:31-08:00
+ * IP PROTECTION ENABLED
+ */
+
 export enum RealEstateStatus {
     WELCOME = 'Welcome & Translation',
     LISTING = 'Listing Composer',
@@ -15,6 +21,7 @@ export enum RealEstateStatus {
     CLOSED = 'Closed',
     PLOT_PLAN = 'Plot Plan & Design',
     PET_TRACKER = 'Pet & IoT Monitor',
+    PROPERTY_MANAGEMENT = 'Property Management',
 }
 
 export interface RoomSpec {
@@ -138,6 +145,51 @@ export interface MaintenanceJob {
     photosAfter: string[];
 }
 
+export interface Tenant {
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
+    unitNumber: string;
+    leaseStart: string;
+    leaseEnd: string;
+    rentAmount: number;
+    depositAmount: number;
+    paymentStatus: 'Paid' | 'Late' | 'Unpaid';
+    documents: RealEstateDocument[];
+}
+
+export interface Unit {
+    id: string;
+    unitNumber: string;
+    type: 'Studio' | '1BR' | '2BR' | '3BR' | 'Penthouse';
+    status: 'Occupied' | 'Vacant' | 'Maintenance';
+    rentAmount: number;
+    tenantId?: string;
+}
+
+export interface PropertyComplex {
+    id: string;
+    name: string;
+    address: string;
+    units: Unit[];
+    tenants: Tenant[];
+    maintenanceJobs: MaintenanceJob[];
+    totalRevenue: number;
+    occupancyRate: number;
+}
+
+export interface Transaction {
+    id: string;
+    amount: number;
+    type: 'Rent' | 'Deposit' | 'Maintenance' | 'Fee';
+    status: 'Pending' | 'Completed' | 'Failed';
+    timestamp: string;
+    from: string;
+    to: string;
+    description: string;
+}
+
 export interface Listing {
     id: string;
     address: string;
@@ -160,6 +212,8 @@ export interface Listing {
     plotPlan?: string; // Base64 image of the overall plot plan
     petData?: PetSensorData;
     maintenanceJobs?: MaintenanceJob[];
+    propertyComplex?: PropertyComplex;
+    transactions?: Transaction[];
 }
 
 export interface ChatMessage {

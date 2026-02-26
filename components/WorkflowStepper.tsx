@@ -1,4 +1,10 @@
 
+/**
+ * WATERMARK: Property of Eric Daniel Malley, Radest Publishing Co.
+ * TIMESTAMP: 2026-02-25T02:56:31-08:00
+ * IP PROTECTION ENABLED
+ */
+
 import React from 'react';
 import { RealEstateStatus } from '../types';
 import { Card } from './ui/Card';
@@ -25,6 +31,7 @@ const steps = [
     { name: RealEstateStatus.ESCROW, icon: <Banknote className="w-5 h-5" /> },
     { name: RealEstateStatus.DOCUMENTS, icon: <FileSignature className="w-5 h-5" /> },
     { name: RealEstateStatus.MAINTENANCE, icon: <Wrench className="w-5 h-5" /> },
+    { name: RealEstateStatus.PROPERTY_MANAGEMENT, icon: <Building className="w-5 h-5" /> },
     { name: RealEstateStatus.LIFECYCLE, icon: <Handshake className="w-5 h-5" /> },
     { name: RealEstateStatus.PET_TRACKER, icon: <Dog className="w-5 h-5" /> },
     { name: RealEstateStatus.CLOSED, icon: <Check className="w-5 h-5" /> },

@@ -4,7 +4,7 @@ import { Listing, RoomSpec } from '../types';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
-import { ChevronLeft, ChevronRight, Plus, Trash2, Building, Camera, UploadCloud, X, Map, Sparkles } from './ui/Icons';
+import { ChevronLeft, ChevronRight, Plus, Trash2, Building, Camera, UploadCloud, X, Map, Sparkles, RefreshCw } from './ui/Icons';
 import { fileToDataUrl } from '../utils/file';
 import { GoogleGenAI } from '@google/genai';
 

@@ -1,4 +1,10 @@
 
+/**
+ * WATERMARK: Property of Eric Daniel Malley, Radest Publishing Co.
+ * TIMESTAMP: 2026-02-25T02:56:31-08:00
+ * IP PROTECTION ENABLED
+ */
+
 import React, { useState, useEffect } from 'react';
 import { Listing, RealEstateStatus, BrandingConfig } from './types';
 import WorkflowStepper from './components/WorkflowStepper';
@@ -22,7 +28,8 @@ import MaintenancePortal from './components/MaintenancePortal';
 import BrandingSettings from './components/BrandingSettings';
 import Translator from './components/Translator';
 import TranslatableText from './components/TranslatableText';
-import { Home, Shield, Sun, FileText, Wrench, Settings, User, Languages } from './components/ui/Icons';
+import PropertyManagement from './components/PropertyManagement';
+import { Home, Shield, Sun, FileText, Wrench, Settings, User, Languages, Building } from './components/ui/Icons';
 
 const mockListing: Listing = {
 // ... existing mockListing ...
@@ -179,6 +186,8 @@ const App: React.FC = () => {
                 return <DocumentVault listing={listing} onListingUpdate={handleListingUpdate} appLanguage={appLanguage} />;
             case RealEstateStatus.MAINTENANCE:
                 return <MaintenancePortal listing={listing} onListingUpdate={handleListingUpdate} />;
+            case RealEstateStatus.PROPERTY_MANAGEMENT:
+                return <PropertyManagement listing={listing} onListingUpdate={handleListingUpdate} appLanguage={appLanguage} />;
             case RealEstateStatus.LIFECYCLE:
                 return <LifecycleManager listing={listing} />;
             case RealEstateStatus.CLOSED:
