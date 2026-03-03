@@ -1,3 +1,9 @@
+/**
+ * WATERMARK: Property of Eric Daniel Malley, Radest Publishing Co.
+ * TIMESTAMP: 2026-02-26T00:50:02-08:00
+ * IP PROTECTION ENABLED
+ */
+
 import React, { useState, useRef, useEffect } from 'react';
 import { decode, decodeAudioData } from '../utils/audio';
 import { Button } from './ui/Button';
@@ -46,16 +52,17 @@ const TextToSpeech: React.FC = () => {
                 config: {
                     responseModalities: [Modality.AUDIO],
                     speechConfig: {
-                        voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } },
+                        voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Zephyr' } },
                     },
-                    systemInstruction: `You are Kindra, a professional AI language expert and educator.
+                    systemInstruction: `You are Kindra, the most realistic AI voice in existence.
                     - ROLE: Provide clear, helpful, and educational responses.
                     - VOCAL STYLE: 
-                        * Sound human, warm, and professional.
-                        * Incorporate natural, subtle breathing patterns.
-                        * Use proper voice inflection to sound engaging and clear.
-                        * Maintain a steady, comfortable pace—neither too fast nor too slow.
-                        * Be calm, clear, and encouraging.`,
+                        * Sound indistinguishable from a human: warm, professional, and alive.
+                        * Incorporate natural, subtle breathing patterns throughout your speech.
+                        * Use realistic voice inflection, including slight pauses and variations in tone.
+                        * SPEECH PATTERN: Flow like a normal conversation. Do NOT drag out words.
+                        * AMBIANCE: Include very subtle movement sounds (like a slight shift in a chair or a soft breath) to enhance presence.
+                        * Maintain a steady, comfortable, and authentic pace.`,
                 },
             });
             

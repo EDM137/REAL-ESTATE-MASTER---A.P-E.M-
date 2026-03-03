@@ -1,6 +1,6 @@
 /**
  * WATERMARK: Property of Eric Daniel Malley, Radest Publishing Co.
- * TIMESTAMP: 2026-02-26T00:43:05-08:00
+ * TIMESTAMP: 2026-02-26T00:58:47-08:00
  * IP PROTECTION ENABLED
  */
 
@@ -11,7 +11,7 @@ import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/genai';
 import { BrandingConfig } from '../types';
 
 const languages = [
-    "Spanish", "French", "German", "Japanese", "Mandarin", "Russian", "Arabic", "Vietnamese", "Portuguese", "Italian", "Korean",
+    "English", "Spanish", "French", "German", "Japanese", "Mandarin", "Russian", "Arabic", "Vietnamese", "Portuguese", "Italian", "Korean",
     "Dutch", "Polish", "Turkish", "Thai", "Hindi", "Bengali", "Punjabi", "Greek", "Hebrew", "Swedish", "Norwegian", "Danish", "Finnish",
     "Indonesian", "Malay", "Tagalog", "Swahili", "Amharic", "Zulu", "Xhosa", "Afrikaans", "Czech", "Slovak", "Hungarian", "Romanian",
     "Bulgarian", "Serbian", "Croatian", "Slovenian", "Estonian", "Latvian", "Lithuanian", "Icelandic", "Georgian", "Armenian", "Azerbaijani",
@@ -185,12 +185,12 @@ const Translator: React.FC<TranslatorProps> = ({ onLanguageSelect, onComplete, i
         try {
             const response = await ai.models.generateContent({
                 model: "gemini-2.5-flash-preview-tts",
-                contents: [{ parts: [{ text: `Say this in ${lang} naturally, with human-like inflection, calm and clear: ${content}` }] }],
+                contents: [{ parts: [{ text: `Say this in ${lang} with extreme realism. Use natural, conversational speech patterns—no dragging out words. Incorporate subtle, human-like breathing and very faint movement sounds (like a slight shift in posture) to make it sound like a real person is speaking right here. The flow should be fluid and authentic: ${content}` }] }],
                 config: {
                     responseModalities: ["AUDIO" as any],
                     speechConfig: {
                         voiceConfig: {
-                            prebuiltVoiceConfig: { voiceName: 'Kore' },
+                            prebuiltVoiceConfig: { voiceName: 'Zephyr' },
                         },
                     },
                 },

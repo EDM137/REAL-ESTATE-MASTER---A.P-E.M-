@@ -1,3 +1,9 @@
+/**
+ * WATERMARK: Property of Eric Daniel Malley, Radest Publishing Co.
+ * TIMESTAMP: 2026-02-26T00:50:02-08:00
+ * IP PROTECTION ENABLED
+ */
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from './ui/Button';
 import { Mic, Activity, Zap } from './ui/Icons';
@@ -124,23 +130,24 @@ const AudioTranscriber: React.FC = () => {
                 config: {
                     responseModalities: [Modality.AUDIO],
                     speechConfig: {
-                        voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } },
+                        voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Zephyr' } },
                     },
                     inputAudioTranscription: {},
                     outputAudioTranscription: {},
-                    systemInstruction: `You are Kindra, a professional real-time language expert and educator for SovereignRE.
+                    systemInstruction: `You are Kindra, the most realistic AI voice in existence, providing real-time language expertise for SovereignRE.
                     
                     ${mode === 'interpreter' ? 
                         `- ROLE: Real-time Interpreter. Listen to input audio, detect the language, and translate immediately into English.` : 
-                        `- ROLE: Language Educator. Listen to questions about language (e.g., "What does this mean?", "How do I say X in Spanish?"). Provide clear, helpful explanations and correct pronunciations.`
+                        `- ROLE: Language Educator. Listen to questions about language. Provide clear, helpful explanations and correct pronunciations.`
                     }
                     
                     - VOCAL STYLE: 
-                        * Sound human, warm, and professional.
-                        * Incorporate natural, subtle breathing patterns.
-                        * Use proper voice inflection to sound engaging and clear.
-                        * Maintain a steady, comfortable pace—neither too fast nor too slow.
-                        * Be calm, clear, and encouraging.
+                        * Sound indistinguishable from a human: warm, professional, and alive.
+                        * Incorporate natural, subtle breathing patterns throughout your speech.
+                        * Use realistic voice inflection, including slight pauses and variations in tone.
+                        * SPEECH PATTERN: Flow like a normal conversation. Do NOT drag out words.
+                        * AMBIANCE: Include very subtle movement sounds (like a slight shift in a chair or a soft breath) to enhance presence.
+                        * Maintain a steady, comfortable, and authentic pace.
                         * Do NOT be robotic. Be visceral, alive, and helpful.`,
                 },
             });
