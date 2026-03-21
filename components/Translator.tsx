@@ -1,13 +1,13 @@
 /**
  * WATERMARK: Property of Eric Daniel Malley, Radest Publishing Co.
- * TIMESTAMP: 2026-02-26T00:58:47-08:00
+ * TIMESTAMP: 2026-03-10T13:16:08-07:00
  * IP PROTECTION ENABLED
  */
 
 import React, { useState, useEffect } from 'react';
 import { Button } from './ui/Button';
 import { Languages, Volume2, History, X, Bot } from './ui/Icons';
-import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/genai';
+import { GoogleGenAI, HarmCategory, HarmBlockThreshold, Modality } from '@google/genai';
 import { BrandingConfig } from '../types';
 
 const languages = [
@@ -101,7 +101,7 @@ const Translator: React.FC<TranslatorProps> = ({ onLanguageSelect, onComplete, i
 
     const handleTranslate = async () => {
         if (!text.trim() && !isOnboarding) {
-            setError('Please enter text to translate. AI service might not be available.');
+            setError('Please enter text to translate.');
             return;
         }
         
@@ -110,7 +110,14 @@ const Translator: React.FC<TranslatorProps> = ({ onLanguageSelect, onComplete, i
             onLanguageSelect?.(targetLanguage);
             return;
         }
+        
+        const apiKey = process.env.API_KEY;
+        if (!apiKey) {
+            setError('AI service is not configured.');
+            return;
+        }
 
+        const ai = new GoogleGenAI({ apiKey });
         setIsLoading(true);
         setTranslatedText('');
         setDetectedLanguage('');
@@ -181,13 +188,15 @@ const Translator: React.FC<TranslatorProps> = ({ onLanguageSelect, onComplete, i
     };
 
     const handlePronounce = async (content: string, lang: string) => {
-        if (!ai) return;
+        const apiKey = process.env.API_KEY;
+        if (!apiKey) return;
+        const ai = new GoogleGenAI({ apiKey });
         try {
             const response = await ai.models.generateContent({
                 model: "gemini-2.5-flash-preview-tts",
-                contents: [{ parts: [{ text: `Say this in ${lang} with extreme realism. Use natural, conversational speech patterns—no dragging out words. Incorporate subtle, human-like breathing and very faint movement sounds (like a slight shift in posture) to make it sound like a real person is speaking right here. The flow should be fluid and authentic: ${content}` }] }],
+                contents: { parts: [{ text: `Say this in ${lang} with extreme realism, natural breathing, and a conversational flow: ${content}` }] },
                 config: {
-                    responseModalities: ["AUDIO" as any],
+                    responseModalities: [Modality.AUDIO],
                     speechConfig: {
                         voiceConfig: {
                             prebuiltVoiceConfig: { voiceName: 'Zephyr' },
@@ -207,10 +216,16 @@ const Translator: React.FC<TranslatorProps> = ({ onLanguageSelect, onComplete, i
     };
 
     const handleEducate = async () => {
-        if (!text.trim() || !ai) {
+        if (!text.trim()) {
             setError('Please enter a question or phrase to learn about.');
             return;
         }
+        const apiKey = process.env.API_KEY;
+        if (!apiKey) {
+            setError('AI service is not configured.');
+            return;
+        }
+        const ai = new GoogleGenAI({ apiKey });
         setIsLoading(true);
         setExplanation('');
         setError('');

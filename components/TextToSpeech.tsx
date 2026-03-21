@@ -1,6 +1,6 @@
 /**
  * WATERMARK: Property of Eric Daniel Malley, Radest Publishing Co.
- * TIMESTAMP: 2026-02-26T00:50:02-08:00
+ * TIMESTAMP: 2026-03-10T13:16:08-07:00
  * IP PROTECTION ENABLED
  */
 
@@ -24,10 +24,18 @@ const TextToSpeech: React.FC = () => {
     }, []);
 
     const handleGenerateAndPlay = async () => {
-        if (!text.trim() || !ai) {
-            setError('Please enter some text. AI service might not be available.');
+        if (!text.trim()) {
+            setError('Please enter some text.');
             return;
         }
+        
+        const apiKey = process.env.API_KEY;
+        if (!apiKey) {
+            setError('AI service is not configured.');
+            return;
+        }
+
+        const ai = new GoogleGenAI({ apiKey });
         setIsLoading(true);
         setError('');
 
@@ -48,21 +56,12 @@ const TextToSpeech: React.FC = () => {
         try {
             const response = await ai.models.generateContent({
                 model: "gemini-2.5-flash-preview-tts",
-                contents: [{ parts: [{ text: text }] }],
+                contents: { parts: [{ text: `Say this with extreme realism, natural breathing, and a conversational flow: ${text}` }] },
                 config: {
                     responseModalities: [Modality.AUDIO],
                     speechConfig: {
                         voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Zephyr' } },
                     },
-                    systemInstruction: `You are Kindra, the most realistic AI voice in existence.
-                    - ROLE: Provide clear, helpful, and educational responses.
-                    - VOCAL STYLE: 
-                        * Sound indistinguishable from a human: warm, professional, and alive.
-                        * Incorporate natural, subtle breathing patterns throughout your speech.
-                        * Use realistic voice inflection, including slight pauses and variations in tone.
-                        * SPEECH PATTERN: Flow like a normal conversation. Do NOT drag out words.
-                        * AMBIANCE: Include very subtle movement sounds (like a slight shift in a chair or a soft breath) to enhance presence.
-                        * Maintain a steady, comfortable, and authentic pace.`,
                 },
             });
             
