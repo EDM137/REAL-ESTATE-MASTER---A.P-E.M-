@@ -1,6 +1,6 @@
 /**
  * WATERMARK: Property of Eric Daniel Malley, Radest Publishing Co.
- * TIMESTAMP: 2026-03-10T13:16:08-07:00
+ * TIMESTAMP: 2026-04-19T08:57:27-07:00
  * IP PROTECTION ENABLED
  */
 
@@ -194,7 +194,11 @@ const Translator: React.FC<TranslatorProps> = ({ onLanguageSelect, onComplete, i
         try {
             const response = await ai.models.generateContent({
                 model: "gemini-2.5-flash-preview-tts",
-                contents: { parts: [{ text: `Say this in ${lang} with extreme realism, natural breathing, and a conversational flow: ${content}` }] },
+                contents: { 
+                    parts: [{ 
+                        text: `[REFINED VOICE GUIDANCE: You are Kindra, a well-spoken Caucasian woman. Use proper enunciation and natural pronunciation in ${lang}. Incorporate subtle, realistic breaths between sentences and phrases. Your tone should be conversational, warm, and highly expressive, adjusting your emotional inflection naturally to the context of this text.] Output the following text: ${content}` 
+                    }] 
+                },
                 config: {
                     responseModalities: [Modality.AUDIO],
                     speechConfig: {

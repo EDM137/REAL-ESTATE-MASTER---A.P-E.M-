@@ -1,0 +1,75 @@
+{
+  "entities": {
+    "listings": {
+      "title": "Property Listing",
+      "description": "Core listing data for the real estate lifecycle",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "address": { "type": "string" },
+        "price": { "type": "number" },
+        "status": { "type": "string" },
+        "sellerName": { "type": "string" },
+        "sellerEmail": { "type": "string" },
+        "sellerPhone": { "type": "string" },
+        "description": { "type": "string" },
+        "photos": { "type": "array", "items": { "type": "string" } },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "address", "price", "status"]
+    },
+    "rooms": {
+      "title": "Room Specification",
+      "description": "Dimensions and details for a specific room",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "roomName": { "type": "string" },
+        "ceilingHeight": { "type": "number" },
+        "windowCount": { "type": "number" },
+        "notes": { "type": "string" }
+      }
+    },
+    "offers": {
+      "title": "Real Estate Offer",
+      "description": "Financial and legal offer for a property",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "buyerName": { "type": "string" },
+        "amount": { "type": "number" },
+        "status": { "type": "string" },
+        "receivedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "messages": {
+      "title": "Chat Message",
+      "description": "Encrypted message from the war room",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "senderId": { "type": "string" },
+        "content": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      }
+    }
+  },
+  "firestore": {
+    "listings/{listingId}": {
+      "schema": "listings",
+      "description": "Primary document for a property lifecycle"
+    },
+    "listings/{listingId}/rooms/{roomId}": {
+      "schema": "rooms",
+      "description": "Sub-collection for detailed room specs"
+    },
+    "listings/{listingId}/offers/{offerId}": {
+      "schema": "offers",
+      "description": "Sub-collection for bids and negotiations"
+    },
+    "listings/{listingId}/messages/{messageId}": {
+      "schema": "messages",
+      "description": "Secure communication log for the war room"
+    }
+  }
+}

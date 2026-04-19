@@ -1,0 +1,67 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Common Helpers
+    function isSignedIn() { return request.auth != null; }
+    function isSuperUser() {
+      return isSignedIn() && (
+        request.auth.token.email == "mybusinesspartnereric@gmail.com" ||
+        request.auth.token.email == "ericdmalley137@gmail.com"
+      );
+    }
+    function isOwner(userId) { return isSignedIn() && (request.auth.uid == userId || isSuperUser()); }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+
+    // Validation Blueprints
+    function isValidListing(data) {
+      return data.id is string && data.id.size() <= 100 &&
+             data.address is string && data.address.size() <= 255 &&
+             data.price is number &&
+             data.status is string;
+    }
+
+    // Listings Collection
+    match /listings/{listingId} {
+      allow read: if true; 
+      
+      // Allow creation for demo purposes, or if signed in
+      allow create: if (isSignedIn() || true) && isValidListing(incoming()) && 
+                       isValidId(listingId) && 
+                       incoming().id == listingId;
+                       
+      allow update: if (isSuperUser() || isSignedIn()) && isValidId(listingId) && 
+                       incoming().id == existing().id;
+                       
+      allow delete: if isSuperUser(); 
+
+      // Room Specs Sub-collection
+      match /rooms/{roomId} {
+        allow read: if true;
+        allow write: if (isSuperUser() || isSignedIn()) && isValidId(roomId);
+      }
+
+      // Offers Sub-collection
+      match /offers/{offerId} {
+        allow read: if isSuperUser() || isSignedIn();
+        allow create: if (isSuperUser() || isSignedIn()) && isValidId(offerId);
+        allow update: if isSuperUser() || (isSignedIn() && incoming().diff(existing()).affectedKeys().hasOnly(['status']));
+        allow delete: if isSuperUser();
+      }
+
+      // Secure Chat Messages
+      match /messages/{messageId} {
+        allow read: if isSuperUser() || isSignedIn();
+        allow create: if (isSuperUser() || isSignedIn()) && isValidId(messageId);
+        allow delete: if isSuperUser();
+      }
+    }
+  }
+}

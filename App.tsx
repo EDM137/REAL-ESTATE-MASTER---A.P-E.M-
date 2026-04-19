@@ -1,7 +1,7 @@
 
 /**
  * WATERMARK: Property of Eric Daniel Malley, Radest Publishing Co.
- * TIMESTAMP: 2026-03-10T13:16:08-07:00
+ * TIMESTAMP: 2026-04-19T08:57:27-07:00
  * IP PROTECTION ENABLED
  */
 
@@ -29,7 +29,11 @@ import BrandingSettings from './components/BrandingSettings';
 import Translator from './components/Translator';
 import TranslatableText from './components/TranslatableText';
 import PropertyManagement from './components/PropertyManagement';
-import { Home, Shield, Sun, FileText, Wrench, Settings, User, Languages, Building } from './components/ui/Icons';
+import ConnectivityHub from './components/ConnectivityHub';
+import { Home, Shield, Sun, FileText, Wrench, Settings, User, Languages, Building, Network } from './components/ui/Icons';
+import { db, auth } from './lib/firebase';
+import { onSnapshot, doc, setDoc } from 'firebase/firestore';
+import { onAuthStateChanged, signInAnonymously } from 'firebase/auth';
 
 const mockListing: Listing = {
 // ... existing mockListing ...
@@ -83,6 +87,38 @@ const App: React.FC = () => {
         theme: 'dark',
         primaryColor: '#3B82F6'
     });
+    const [user, setUser] = useState<any>(null);
+
+    useEffect(() => {
+        // Authenticate - switch to real connections as mandated
+        const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setUser(user);
+            }
+        });
+
+        // Sync Listing Data from Firestore (Real Data Integration)
+        const unsubscribeData = onSnapshot(doc(db, 'listings', mockListing.id), (snapshot) => {
+            if (snapshot.exists()) {
+                setListing(snapshot.data() as Listing);
+            } else {
+                // Initialize if first time
+                // Public create allowed for demo init
+                setDoc(doc(db, 'listings', mockListing.id), mockListing).catch(err => {
+                    if (err.message?.includes('insufficient permissions')) {
+                        console.warn("Initial sync waiting for auth or rules deploy...");
+                    } else {
+                        console.error("Init sync failed:", err);
+                    }
+                });
+            }
+        });
+
+        return () => {
+            unsubscribeAuth();
+            unsubscribeData();
+        };
+    }, []);
 
     useEffect(() => {
         const savedBranding = localStorage.getItem('brandingConfig');
@@ -142,6 +178,9 @@ const App: React.FC = () => {
 
     const handleListingUpdate = (updatedListing: Listing) => {
         setListing(updatedListing);
+        // Persist to real Firestore connection
+        setDoc(doc(db, 'listings', updatedListing.id), updatedListing)
+            .catch(err => console.error("Firestore persistence failed:", err));
     };
 
     const renderActiveStepComponent = () => {
@@ -188,6 +227,8 @@ const App: React.FC = () => {
                 return <MaintenancePortal listing={listing} onListingUpdate={handleListingUpdate} />;
             case RealEstateStatus.PROPERTY_MANAGEMENT:
                 return <PropertyManagement listing={listing} onListingUpdate={handleListingUpdate} appLanguage={appLanguage} />;
+            case RealEstateStatus.CONNECTIVITY:
+                return <ConnectivityHub appLanguage={appLanguage} />;
             case RealEstateStatus.LIFECYCLE:
                 return <LifecycleManager listing={listing} />;
             case RealEstateStatus.CLOSED:
@@ -227,9 +268,14 @@ const App: React.FC = () => {
                         <Home className="w-8 h-8 text-brand-blue" />
                     )}
                     <div>
-                        <h1 className="text-2xl font-bold text-brand-highlight">
+                        <h1 className="text-2xl font-bold text-brand-highlight flex items-center gap-2">
                             {branding.companyName.split(' ')[0]}
                             <span className="font-light text-brand-light">{branding.companyName.split(' ').slice(1).join(' ')}</span>
+                            {user?.email && (user.email === 'mybusinesspartnereric@gmail.com' || user.email === 'ericdmalley137@gmail.com') && (
+                                <span className="text-[10px] bg-brand-blue/20 text-brand-blue px-2 py-0.5 rounded-full border border-brand-blue/30 uppercase tracking-tighter font-black animate-pulse">
+                                    Owner
+                                </span>
+                            )}
                         </h1>
                         <p className="text-[10px] text-brand-light uppercase tracking-widest font-bold flex items-center gap-1">
                             <User className="w-2 h-2" /> {branding.userName}
@@ -268,7 +314,7 @@ const App: React.FC = () => {
             </main>
             
             <footer className="text-center p-4 border-t border-brand-accent text-xs text-brand-light">
-                <TranslatableText targetLanguage={appLanguage}>&copy; 2024 SovereignRE. Property of Eric Daniel Malley, Radest Publishing Co. All Rights Reserved.</TranslatableText>
+                <TranslatableText targetLanguage={appLanguage}>&copy; 2026 SovereignRE. Property of Eric Daniel Malley, Radest Publishing Co. (ASCAP) All Rights Reserved.</TranslatableText>
             </footer>
         </div>
     );

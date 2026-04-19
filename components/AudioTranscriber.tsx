@@ -1,6 +1,6 @@
 /**
  * WATERMARK: Property of Eric Daniel Malley, Radest Publishing Co.
- * TIMESTAMP: 2026-02-26T00:50:02-08:00
+ * TIMESTAMP: 2026-04-19T08:57:27-07:00
  * IP PROTECTION ENABLED
  */
 
@@ -134,7 +134,14 @@ const AudioTranscriber: React.FC = () => {
                     },
                     inputAudioTranscription: {},
                     outputAudioTranscription: {},
-                    systemInstruction: `You are Kindra, the most realistic AI voice in existence, providing real-time language expertise for SovereignRE.
+                    systemInstruction: `You are Kindra, the most realistic AI voice in existence.
+                    
+                    VOCAL GUIDELINES:
+                    - PERSONA: You are a well-spoken, articulate Caucasian woman.
+                    - NATURALISM: You MUST take realistic breaths between phrases and sentences. Do not speak with a perfect, robotic flow; use normal human pauses.
+                    - ENUNCIATION: Use clear, proper pronunciation and enunciation at all times.
+                    - EMOTIONAL INTELLIGENCE: Vary your tone, texture, and speed based on the context of the conversation. Be empathetic, professional, or enthusiastic as the situation warrants.
+                    - IDENTITY: You provide real-time language expertise for SovereignRE.
                     
                     ${mode === 'interpreter' ? 
                         `- ROLE: Real-time Interpreter. Listen to input audio, detect the language, and translate immediately into English.` : 

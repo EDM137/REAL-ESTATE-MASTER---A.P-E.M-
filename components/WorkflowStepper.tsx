@@ -1,14 +1,14 @@
 
 /**
  * WATERMARK: Property of Eric Daniel Malley, Radest Publishing Co.
- * TIMESTAMP: 2026-03-10T13:16:08-07:00
+ * TIMESTAMP: 2026-04-19T08:57:27-07:00
  * IP PROTECTION ENABLED
  */
 
 import React from 'react';
 import { RealEstateStatus } from '../types';
 import { Card } from './ui/Card';
-import { CheckCircle, Circle, Home, Building, Gavel, Banknote, FileSignature, Handshake, Check, Calendar, Globe, Briefcase, Film, PenTool, Dog, Wrench } from './ui/Icons';
+import { CheckCircle, Circle, Home, Building, Gavel, Banknote, FileSignature, Handshake, Check, Calendar, Globe, Briefcase, Film, PenTool, Dog, Wrench, Network } from './ui/Icons';
 import AdBanner from './AdBanner';
 
 import TranslatableText from './TranslatableText';
@@ -32,6 +32,7 @@ const steps = [
     { name: RealEstateStatus.DOCUMENTS, icon: <FileSignature className="w-5 h-5" /> },
     { name: RealEstateStatus.MAINTENANCE, icon: <Wrench className="w-5 h-5" /> },
     { name: RealEstateStatus.PROPERTY_MANAGEMENT, icon: <Building className="w-5 h-5" /> },
+    { name: RealEstateStatus.CONNECTIVITY, icon: <Network className="w-5 h-5" /> },
     { name: RealEstateStatus.LIFECYCLE, icon: <Handshake className="w-5 h-5" /> },
     { name: RealEstateStatus.PET_TRACKER, icon: <Dog className="w-5 h-5" /> },
     { name: RealEstateStatus.CLOSED, icon: <Check className="w-5 h-5" /> },

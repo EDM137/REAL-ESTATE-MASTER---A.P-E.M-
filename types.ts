@@ -1,7 +1,7 @@
 
 /**
  * WATERMARK: Property of Eric Daniel Malley, Radest Publishing Co.
- * TIMESTAMP: 2026-03-10T13:16:08-07:00
+ * TIMESTAMP: 2026-04-19T08:44:08-07:00
  * IP PROTECTION ENABLED
  */
 
@@ -22,6 +22,7 @@ export enum RealEstateStatus {
     PLOT_PLAN = 'Plot Plan & Design',
     PET_TRACKER = 'Pet & IoT Monitor',
     PROPERTY_MANAGEMENT = 'Property Management',
+    CONNECTIVITY = 'Connectivity Hub',
 }
 
 export interface RoomSpec {
