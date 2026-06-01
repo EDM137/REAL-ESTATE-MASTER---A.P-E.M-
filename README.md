@@ -1,20 +1,35 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# REAL-ESTATE-MASTER™ AI Suite
+## © 2026 Eric Daniel Malley / RADEST Publishing Co. | EIN: 41-5335456
 
-# Run and deploy your AI Studio app
+> ⚠️ **PROPRIETARY SOFTWARE — NON-OPEN-SOURCE**
+> Unauthorized use subject to **$150,000 USD per violation**. See LICENSE.txt.
 
-This contains everything you need to run your app locally.
+## 🏠 The Complete AI-Powered Real Estate Office
 
-View your app in AI Studio: https://ai.studio/apps/9a10923c-25a2-4e13-a9bc-9b8dc033e4a1
+REAL-ESTATE-MASTER™ is a full-stack AI platform for real estate professionals.
+15+ AI modules: listings, AI copilot, escrow, virtual tours, document vault,
+offer engine, maintenance portal, smart scheduler, and more.
 
-## Run Locally
+---
 
-**Prerequisites:**  Node.js
+## 💰 PRICING & ACCESS
 
+| Plan | Price | Link |
+|------|-------|------|
+| **Starter** | $49/mo | [🚀 Start Free Trial](https://buy.stripe.com/test_7sYaEXglwfqSfEsfTn0x200) |
+| **Pro Annual** | $299/yr | [💎 Get Pro Annual](https://buy.stripe.com/test_8x2fZhedoceG0Jy5eJ0x201) |
+| **Business** | $2,499/yr | [Contact](mailto:mybusinesspartnereric@gmail.com) |
+| **Enterprise/Gov** | $24,999–$75,000 | [Contact](mailto:mybusinesspartnereric@gmail.com) |
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+📞 **657-679-9725** | ✉️ **mybusinesspartnereric@gmail.com**
+
+---
+
+## 🔐 IP PROTECTION
+
+- Patent Pending — USPTO filing deadline March 2027
+- Blockchain anchored: RADEST GOVFORGE Ledger Block #320
+- EULA: RADEST-EULA-2026-06-01-001 — $150K per violation globally enforced
+- ASCAP Registered: RADEST Publishing Co.
+
+**© 2022–2026 Eric Daniel Malley. All Rights Reserved.**
