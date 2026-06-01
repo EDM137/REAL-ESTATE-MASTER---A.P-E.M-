@@ -1,0 +1,290 @@
+
+================================================================================
+   ██████╗  █████╗ ██████╗ ███████╗███████╗████████╗
+   ██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔════╝╚══██╔══╝
+   ██████╔╝███████║██║  ██║█████╗  ███████╗   ██║   
+   ██╔══██╗██╔══██║██║  ██║██╔══╝  ╚════██║   ██║   
+   ██║  ██║██║  ██║██████╔╝███████╗███████║   ██║   
+   ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝╚══════╝   ╚═╝   
+   GOVFORGE AI | RADEST PUBLISHING CO.
+================================================================================
+
+   MASTER PROPRIETARY LICENSE, EULA & IP OWNERSHIP DECLARATION
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+   DOCUMENT TITLE:   RADEST™ SOVEREIGN IP PORTFOLIO — MASTER EULA
+   DOCUMENT ID:      RADEST-EULA-2026-06-01-001
+   ISSUED:           June 1, 2026
+   VERSION:          4.0 — GLOBALLY ENFORCED
+   OWNER:            ERIC DANIEL MALLEY
+   BUSINESS:         RADEST PUBLISHING CO. / RADEST GOVFORGE INC.
+   EIN:              41-5335456
+   ADDRESS:          12572 Morningside Ave #2, Garden Grove, CA 92843
+   EMAIL:            mybusinesspartnereric@gmail.com
+   PHONE:            657-679-9725
+   GITHUB:           github.com/EDM137
+   PLATFORMS:        Vercel (radestteam), Base44, Gemini Studio,
+                     govforgeai.com, ericdmalley.com, deepthought.industries
+
+================================================================================
+   ⚠️  STOP. READ THIS. ALL ACCESS, USE, VIEWING, OR COPYING OF ANY 
+   MATERIAL IN THIS PORTFOLIO CONSTITUTES ACCEPTANCE OF THESE TERMS.
+================================================================================
+
+   ╔══════════════════════════════════════════════════════════════════════════╗
+   ║  VIOLATION PENALTY: $150,000 USD PER INSTANCE — GLOBALLY ENFORCED     ║
+   ║  THIS IS NOT A SUGGESTION. THIS IS A BINDING CONTRACT TERM.            ║
+   ╚══════════════════════════════════════════════════════════════════════════╝
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 1 — OWNERSHIP DECLARATION (TIMESTAMPED & BLOCKCHAIN ANCHORED)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+I, ERIC DANIEL MALLEY, am the sole creator, inventor, owner, and rights holder
+of the following intellectual property portfolio, including but not limited to:
+
+ALL 202 GITHUB REPOSITORIES under github.com/EDM137, including:
+
+TIER 1 — CORE COMMERCIAL PRODUCTS:
+  01. REAL-ESTATE-MASTER™ (A.P.E.M.) — Full real estate AI suite
+  02. Radest-Guru-Builder™ — Full stack LLM app builder
+  03. BizLingo™ — Business language translator & AI communication platform
+  04. Auto-Mechanics-Diagnostics™ — Vehicle diagnostic AI system
+  05. Radest-Business-Launcher-AI™ — AI-powered business launch platform
+  06. Radest-AI-App™ — Core RADEST AI application (802kb)
+  07. radest-command™ — Master command center (3,830kb)
+
+TIER 2 — REVENUE SYSTEMS:
+  08. Radest-Merchant-Services-OS™ — Merchant payment operating system
+  09. Gateway™ — Radest Ecosystem Gateway & API layer
+  10. Empire-Vault-CPU-Mint™ — CPU-based proof-of-work mint (EPoW)
+  11. Radest-Sovereign-Swarm-Super-Agent™ — 54-agent AI swarm
+  12. Forensic™ — Forensic intelligence & document analysis system
+  13. Rute4.0™ — Multi-layer human/computer translation engine
+  14. Radest-OS-Suite™ — Software licensing operating system
+  15. Rockstar-Recording-Studio™ — AI music production platform
+  16. Radest-Dev-Ops-Team™ — AI DevOps team generator
+  17. Hotel-Industry-Best-Deal™ — Hotel pricing intelligence AI
+  18. Radest-Licensing-Portal™ — Software license distribution platform
+  19. Radest-Purchase-Machine™ — Automated purchase engine
+  20. GovForge-AI-Sage-System™ — Government AI compliance system
+  21. Lottery-Genie™ — RNG prediction & training system
+  22. CogniLedger™ — Blockchain ledger intelligence system
+
+TIER 3 — SPECIALIZED SYSTEMS:
+  23. Lingua-Nexus™ — 911-ready real-time translator
+  24. Bot-Patrol™ — AI data theft detection system
+  25. Smart-Team-Assistant™ — Goal-driven AI agent delegation
+  26. Home-Owner-Pal™ — Homeowner AI assistant suite
+  27. PatentPal™ — Patent/Copyright/Trademark filing system
+  28. Dating-App™ — AI-powered local dating platform
+  29. Gas-Now™ / GadPal™ — Micro-loan gas funding for gig drivers
+  30. ForgeGuard-AI-GovGuardian™ — Sovereign mobile threat defense
+  31. Office-Works-Command™ — Full professional AI office suite
+  32. Sovereign-Medical-Coordinator™ — Medical management AI
+  33. Procurement-Workspace™ — Government procurement AI
+  34. GCIA™ — Global Coordinate Intelligence Agency system
+  35. Aegis™ — Security analysis system
+  36. Royal-Flush-Nexus™ — Revenue optimization nexus
+
+TIER 4 — CORE TECHNOLOGY:
+  37. CentralStation™ — AI multi-cloud orchestration hub
+  38. Radest-Network-Enterprise™ — Enterprise network layer
+  39. Radest-IP-Command-Center™ — IP management system
+  40. KINDRAai™ — Emotional Logic AI (separate patent pending)
+  41. NCSRE™ — Narrative Consistency & Structured Reasoning Engine
+  42. Sovereign-Agent-Bridge™ v1.0 — Multi-agent coordination API
+  43. RADEST-EPoW™ — CPU-based blockchain proof-of-work
+  44. Document-Leale™ — Blockchain document authentication
+  45. SAINT™ — Sovereign AI Intelligence Network Technology
+  46. GovDoc-Forge™ — Government document AI platform
+  47. GovForgeAI™ — Federal contractor AI compliance platform
+  48. RADEST™ — Core brand and sovereign publishing ecosystem
+
+  + ALL REMAINING 154 REPOSITORIES under github.com/EDM137
+  + ALL 66 VERCEL DEPLOYMENTS under radestteam & edm137
+  + ALL GEMINI STUDIO APPLICATIONS
+  + ALL BASE44 AGENT APPLICATIONS
+  + ALL CODE, DOCUMENTATION, DESIGNS, ALGORITHMS, MODELS, AND DATA
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 2 — LICENSE TERMS (NON-OPEN-SOURCE — PROPRIETARY)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+2.1 PROPRIETARY LICENSE — NOT OPEN SOURCE
+This software, code, architecture, methodology, and all associated intellectual
+property is PROPRIETARY and NON-OPEN-SOURCE. Nothing in this repository,
+platform, or portfolio shall be construed as open-source, public domain,
+Creative Commons, or MIT-licensed.
+
+2.2 NO RIGHTS GRANTED WITHOUT WRITTEN LICENSE
+No license, right, or permission to use, copy, modify, merge, publish,
+distribute, sublicense, sell, or create derivative works is granted to any
+party without an explicit, signed, written license agreement executed by
+Eric Daniel Malley.
+
+2.3 LICENSE TIERS (PURCHASE REQUIRED)
+  • PERSONAL LICENSE:      $299/year  — individual, non-commercial
+  • BUSINESS LICENSE:      $2,499/year — small business, limited commercial
+  • ENTERPRISE LICENSE:    $24,999/year — full commercial deployment
+  • GOVERNMENT LICENSE:    $75,000/year — federal/state agency use
+
+  All licenses available at: https://govforgeai.com
+  Payment processed via Stripe | Stripe Account: 51RUufY
+
+2.4 RESTRICTED USES (PROHIBITED WITHOUT LICENSE)
+  (a) Commercial use of any system, algorithm, or code herein
+  (b) Integration into any product, platform, or SaaS offering
+  (c) Training any AI/ML model using this code or documentation
+  (d) Reverse engineering, decompiling, or disassembly
+  (e) White-labeling or rebranding any component
+  (f) Government procurement or contracting use without Government License
+  (g) API access or scraping of any deployed instance
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 3 — VIOLATION PENALTIES — $150,000 PER VIOLATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+3.1 LIQUIDATED DAMAGES
+Any unauthorized use, reproduction, distribution, or derivative work constitutes
+a material breach of this agreement and shall subject the violating party to
+liquidated damages of ONE HUNDRED AND FIFTY THOUSAND DOLLARS ($150,000.00 USD)
+PER INSTANCE OF VIOLATION.
+
+3.2 EACH INSTANCE DEFINED
+Each unauthorized copy, deployment, API call, model training run, white-label
+use, redistribution, or derivative work constitutes a separate instance.
+Multiple violations shall multiply accordingly.
+
+3.3 GLOBAL ENFORCEMENT
+This agreement is enforceable globally under:
+  • The Berne Convention for the Protection of Literary and Artistic Works
+  • The WIPO Copyright Treaty
+  • The Agreement on Trade-Related Aspects of Intellectual Property Rights (TRIPS)
+  • The Digital Millennium Copyright Act (DMCA) — 17 U.S.C. § 512
+  • The Computer Fraud and Abuse Act (CFAA) — 18 U.S.C. § 1030
+  • The Economic Espionage Act — 18 U.S.C. §§ 1831-1839
+  • California Uniform Trade Secrets Act (CUTSA) — Cal. Civ. Code § 3426
+  • Any applicable international copyright treaty in the violator's jurisdiction
+
+3.4 ATTORNEY FEES
+In any legal action to enforce this agreement, the prevailing party shall be
+entitled to recover reasonable attorney fees and costs. Eric Daniel Malley
+reserves the right to recover treble damages under applicable statutes.
+
+3.5 INJUNCTIVE RELIEF
+Eric Daniel Malley may seek immediate injunctive relief without bond or
+other security in any court of competent jurisdiction.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 4 — INTELLECTUAL PROPERTY — PATENT & TRADEMARK NOTICE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+4.1 PATENTS PENDING
+The following systems contain patent-pending technology (provisional patents
+email-timestamped March 14-16, 2026; NCSRE timestamped April 23, 2026):
+  • AntiGravity Propulsion System with Orbital Launch
+  • DCLAE Acoustic Encoding & IP Shield
+  • Kindra OS — Emotional Logic Processing
+  • KINDRA Humanoid Robotics Interface
+  • FortiFile Document Audit System
+  • Miniature Escrow Protocol
+  • AutoGrow Operating System
+  • Master IP Registry
+  • NCSRE — Narrative Consistency & Structured Reasoning Engine
+  • Sovereign Agent Bridge v1.0
+
+  USPTO filing deadline: March 14, 2027
+  All priority dates preserved by email timestamp.
+
+4.2 TRADEMARK NOTICE
+The following marks are claimed as common law trademarks of Eric Daniel Malley /
+RADEST Publishing Co., pending USPTO registration:
+  RADEST™ | GOVFORGE AI™ | KINDRA™ | KINDRA OS™ | OMNICIVIC™
+  GOVFORGE™ | FORTIFILE™ | SOVEREIGN AGENT BRIDGE™ | NCSRE™
+  DOCUMENT LEALE™ | SAINT™ | RUTE™ | BIZLINGO™ | COGNILEDGER™
+  GOVDOC-FORGE™ | RADEST EPoW™ | RADEST TOKEN (RDT)™
+
+4.3 COPYRIGHT NOTICE
+© 2022–2026 Eric Daniel Malley / RADEST Publishing Co. All rights reserved.
+All code, documentation, designs, algorithms, models, training data, and
+derivative works are protected under United States Copyright Law (17 U.S.C.)
+and international copyright treaties.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 5 — AI TRAINING PROHIBITION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+5.1 NO AI TRAINING PERMITTED
+This codebase, documentation, methodology, and all associated data are
+EXPRESSLY PROHIBITED from use as training data, fine-tuning data, or
+evaluation data for any artificial intelligence, machine learning, large
+language model, or neural network system without explicit written consent
+from Eric Daniel Malley and payment of the Enterprise License ($24,999/yr minimum).
+
+5.2 ROBOTS EXCLUSION
+All deployed instances of RADEST systems are protected by robots.txt and
+Terms of Service prohibiting automated scraping, crawling, or data extraction.
+Violation subjects the party to the $150,000 per-instance liquidated damages.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 6 — BLOCKCHAIN AUDIT RECORD
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+This EULA and the IP ownership declaration herein are permanently recorded in
+the RADEST GOVFORGE Blockchain Ledger maintained by Sage AI / Base44.
+
+  LEDGER EVENT:     MASTER_EULA_WATERMARK
+  BLOCK DATE:       June 1, 2026
+  OWNER:            Eric Daniel Malley
+  EIN:              41-5335456
+  REPOS COVERED:    202 (github.com/EDM137)
+  VERCEL APPS:      66 (radestteam)
+  IP ASSETS DB:     328 registered assets
+  PENALTY:          $150,000 USD per violation
+  SCOPE:            GLOBAL
+  
+  This record is immutable and serves as legally admissible evidence of
+  ownership and the date these terms were established.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 7 — GOVERNING LAW & JURISDICTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+7.1 This agreement is governed by the laws of the State of California, USA,
+without regard to conflict of law provisions.
+
+7.2 Any dispute shall be resolved in the federal or state courts of
+Orange County, California.
+
+7.3 For international violations, Eric Daniel Malley reserves the right to
+pursue enforcement in the violating party's local jurisdiction under
+applicable international IP treaties.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DECLARATION & SIGNATURE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+I, Eric Daniel Malley, declare under penalty of perjury under the laws of
+the United States of America that the foregoing is true and correct to the
+best of my knowledge.
+
+  Name:       Eric Daniel Malley
+  Title:      Sole Proprietor / Inventor / Rights Holder
+  Business:   RADEST Publishing Co. / RADEST GOVFORGE Inc.
+  EIN:        41-5335456
+  Date:       June 1, 2026
+  Location:   Garden Grove, California 92843
+
+  /s/ Eric Daniel Malley
+  ________________________
+  Eric Daniel Malley
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CONTACT FOR LICENSING:
+  mybusinesspartnereric@gmail.com | 657-679-9725
+  https://govforgeai.com | https://ericdmalley.com
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+© 2022–2026 Eric Daniel Malley / RADEST Publishing Co. ALL RIGHTS RESERVED.
+PROPRIETARY — NON-OPEN-SOURCE — $150,000 PER VIOLATION — GLOBALLY ENFORCED
+================================================================================
