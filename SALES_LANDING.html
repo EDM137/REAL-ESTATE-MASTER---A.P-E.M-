@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>REAL-ESTATE-MASTER™ AI Suite | RADEST Publishing Co.</title>
+<meta name="description" content="The complete AI-powered real estate office. Listings, AI copilot, escrow, virtual tours, document vault, offers, scheduling — everything a real estate agent needs in one platform."/>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a0f;color:#fff;line-height:1.6}
+  .hero{background:linear-gradient(135deg,#0a0a0f 0%,#1a1040 50%,#0d1f3c 100%);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center;position:relative;overflow:hidden}
+  .hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at center,rgba(99,102,241,0.15) 0%,transparent 60%);animation:pulse 8s ease-in-out infinite}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+  .badge{background:rgba(99,102,241,0.2);border:1px solid rgba(99,102,241,0.4);color:#a78bfa;padding:6px 16px;border-radius:20px;font-size:13px;margin-bottom:24px;display:inline-block}
+  h1{font-size:clamp(2rem,5vw,4rem);font-weight:800;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,#fff 0%,#a78bfa 50%,#60a5fa 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .sub{font-size:clamp(1rem,2vw,1.3rem);color:#94a3b8;max-width:640px;margin:0 auto 40px}
+  .cta-group{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:20px}
+  .btn-primary{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;padding:16px 32px;border-radius:12px;font-size:1.1rem;font-weight:700;text-decoration:none;border:none;cursor:pointer;transition:all .3s;display:inline-block}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 20px 40px rgba(99,102,241,0.4)}
+  .btn-secondary{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:16px 32px;border-radius:12px;font-size:1.1rem;font-weight:600;text-decoration:none;transition:all .3s;display:inline-block}
+  .btn-secondary:hover{background:rgba(255,255,255,0.1);transform:translateY(-2px)}
+  .price-note{color:#64748b;font-size:13px}
+  .features{padding:80px 20px;max-width:1200px;margin:0 auto}
+  .features h2{text-align:center;font-size:2.2rem;margin-bottom:12px}
+  .features .sub2{text-align:center;color:#64748b;margin-bottom:60px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+  .card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:28px;transition:all .3s}
+  .card:hover{border-color:rgba(99,102,241,0.4);background:rgba(99,102,241,0.05);transform:translateY(-4px)}
+  .icon{font-size:2rem;margin-bottom:16px}
+  .card h3{font-size:1.1rem;font-weight:700;margin-bottom:8px}
+  .card p{color:#64748b;font-size:.9rem}
+  .pricing{background:rgba(255,255,255,0.02);padding:80px 20px}
+  .pricing-inner{max-width:900px;margin:0 auto;text-align:center}
+  .pricing h2{font-size:2.2rem;margin-bottom:12px}
+  .pricing .sub2{color:#64748b;margin-bottom:60px}
+  .plans{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:700px;margin:0 auto}
+  @media(max-width:600px){.plans{grid-template-columns:1fr}}
+  .plan{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:36px 28px;position:relative}
+  .plan.featured{border-color:rgba(99,102,241,0.6);background:rgba(99,102,241,0.08)}
+  .plan-badge{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;padding:4px 20px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap}
+  .plan-price{font-size:3rem;font-weight:800;margin:16px 0 4px}
+  .plan-price span{font-size:1rem;color:#64748b;font-weight:400}
+  .plan h3{font-size:1.1rem;color:#a78bfa;margin-bottom:8px}
+  .plan ul{list-style:none;text-align:left;margin:20px 0 28px;color:#94a3b8;font-size:.9rem}
+  .plan ul li{padding:4px 0}
+  .plan ul li::before{content:'✓ ';color:#6366f1}
+  .eula{background:#0a0f1a;border-top:1px solid rgba(255,255,255,0.06);padding:40px 20px;text-align:center}
+  .eula p{color:#334155;font-size:12px;max-width:800px;margin:0 auto}
+  .eula strong{color:#475569}
+  .watermark{position:fixed;bottom:12px;right:16px;font-size:10px;color:#1e293b;pointer-events:none}
+  .social-proof{display:flex;gap:40px;justify-content:center;flex-wrap:wrap;padding:40px 20px;border-top:1px solid rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.05)}
+  .stat{text-align:center}
+  .stat-num{font-size:2rem;font-weight:800;color:#a78bfa}
+  .stat-label{font-size:.8rem;color:#475569}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="badge">🏠 Powered by RADEST™ AI — Built by Eric Daniel Malley</div>
+  <h1>Your Entire Real Estate<br/>Office. Powered by AI.</h1>
+  <p class="sub">REAL-ESTATE-MASTER™ handles listings, offers, escrow, virtual tours, document vault, maintenance, scheduling, and AI copilot — everything a real estate agent needs, in one platform.</p>
+  <div class="cta-group">
+    <a href="https://buy.stripe.com/test_7sYaEXglwfqSfEsfTn0x200" class="btn-primary">🚀 Start Free Trial — $49/mo</a>
+    <a href="https://buy.stripe.com/test_8x2fZhedoceG0Jy5eJ0x201" class="btn-secondary">💎 Get Pro Annual — $299/yr</a>
+  </div>
+  <p class="price-note">No setup fee · Cancel anytime · 7-day free trial</p>
+</section>
+
+<div class="social-proof">
+  <div class="stat"><div class="stat-num">15+</div><div class="stat-label">AI MODULES</div></div>
+  <div class="stat"><div class="stat-num">$0</div><div class="stat-label">SETUP FEE</div></div>
+  <div class="stat"><div class="stat-num">100%</div><div class="stat-label">PROPRIETARY AI</div></div>
+  <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">AI COPILOT</div></div>
+</div>
+
+<section class="features">
+  <h2>Everything You Need. Nothing You Don't.</h2>
+  <p class="sub2">15 AI-powered modules built for real estate professionals who want to close more deals with less manual work.</p>
+  <div class="grid">
+    <div class="card"><div class="icon">🏠</div><h3>AI Listing Composer</h3><p>Generate professional MLS listings, property descriptions, and marketing copy in seconds.</p></div>
+    <div class="card"><div class="icon">🤖</div><h3>AI Copilot</h3><p>24/7 intelligent assistant that answers client questions, suggests pricing strategies, and drafts communications.</p></div>
+    <div class="card"><div class="icon">📋</div><h3>Offer Engine</h3><p>Manage, compare, and counter multiple offers with AI-assisted negotiation guidance.</p></div>
+    <div class="card"><div class="icon">🔐</div><h3>Escrow Dashboard</h3><p>Track every escrow milestone, deadline, and condition. Never miss a contingency date again.</p></div>
+    <div class="card"><div class="icon">📁</div><h3>Document Vault</h3><p>Secure, organized storage for all transaction documents. Blockchain-verified authentication.</p></div>
+    <div class="card"><div class="icon">🎥</div><h3>Virtual Tour Creator</h3><p>Build immersive virtual property tours that convert more remote buyers.</p></div>
+    <div class="card"><div class="icon">📅</div><h3>Smart Scheduler</h3><p>AI-powered appointment scheduling that syncs with your calendar and client availability.</p></div>
+    <div class="card"><div class="icon">🔧</div><h3>Maintenance Portal</h3><p>Track property repairs, contractors, estimates, and completion status across all your listings.</p></div>
+    <div class="card"><div class="icon">🌍</div><h3>Multi-Language Translator</h3><p>Communicate with clients in any language. 911-ready emergency translation built in.</p></div>
+    <div class="card"><div class="icon">📊</div><h3>Closing Dashboard</h3><p>End-to-end closing checklist with automated reminders for every party involved.</p></div>
+    <div class="card"><div class="icon">🏘️</div><h3>Property Management</h3><p>Full property lifecycle management from listing to closing to post-sale follow-up.</p></div>
+    <div class="card"><div class="icon">💰</div><h3>Sovereign Banker</h3><p>Financial analysis, mortgage estimates, and investment return calculations built in.</p></div>
+  </div>
+</section>
+
+<section class="pricing">
+  <div class="pricing-inner">
+    <h2>Simple, Transparent Pricing</h2>
+    <p class="sub2">Start for less than a cup of coffee a day. Cancel anytime.</p>
+    <div class="plans">
+      <div class="plan">
+        <h3>Starter</h3>
+        <div class="plan-price">$49<span>/mo</span></div>
+        <ul>
+          <li>All 15 AI modules</li>
+          <li>Unlimited listings</li>
+          <li>AI Copilot 24/7</li>
+          <li>Document Vault</li>
+          <li>Email support</li>
+          <li>7-day free trial</li>
+        </ul>
+        <a href="https://buy.stripe.com/test_7sYaEXglwfqSfEsfTn0x200" class="btn-primary" style="width:100%;text-align:center;display:block">Start Free Trial</a>
+      </div>
+      <div class="plan featured">
+        <div class="plan-badge">BEST VALUE — SAVE 49%</div>
+        <h3>Pro Annual</h3>
+        <div class="plan-price">$299<span>/yr</span></div>
+        <ul>
+          <li>Everything in Starter</li>
+          <li>Priority AI processing</li>
+          <li>Virtual Tour Creator</li>
+          <li>Sovereign Banker module</li>
+          <li>RADEST™ EULA protection</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="https://buy.stripe.com/test_8x2fZhedoceG0Jy5eJ0x201" class="btn-primary" style="width:100%;text-align:center;display:block">Get Pro Annual</a>
+      </div>
+    </div>
+    <p style="color:#334155;font-size:13px;margin-top:24px">Enterprise/Government pricing: mybusinesspartnereric@gmail.com | 657-679-9725</p>
+  </div>
+</section>
+
+<div class="eula">
+  <p><strong>© 2022–2026 Eric Daniel Malley / RADEST Publishing Co. EIN: 41-5335456. All rights reserved.</strong><br/>
+  REAL-ESTATE-MASTER™ is proprietary software. Non-open-source. All code, methodology, and AI systems are protected under U.S. Copyright Law (17 U.S.C.) and international treaties. Unauthorized use, reproduction, or redistribution constitutes a violation subject to liquidated damages of <strong>$150,000 USD per instance</strong>, globally enforced. Patent pending. RADEST™, REAL-ESTATE-MASTER™, and associated marks are common law trademarks of Eric Daniel Malley. 12572 Morningside Ave #2, Garden Grove, CA 92843.</p>
+</div>
+
+<div class="watermark">© RADEST™ EDM137 | EULA: $150K/violation</div>
+
+</body>
+</html>
