@@ -32,7 +32,7 @@ import PropertyManagement from './components/PropertyManagement';
 import ConnectivityHub from './components/ConnectivityHub';
 import { Button } from './components/ui/Button';
 import { Home, Shield, Sun, FileText, Wrench, Settings, User, Languages, Building, Network, Database } from './components/ui/Icons';
-import { db, auth } from './lib/firebase';
+import { db, auth, handleFirestoreError, OperationType } from './lib/firebase';
 import { onSnapshot, doc, setDoc } from 'firebase/firestore';
 import { onAuthStateChanged, signInAnonymously } from 'firebase/auth';
 
@@ -118,15 +118,12 @@ const App: React.FC = () => {
                 setListing(snapshot.data() as Listing);
             } else {
                 // Initialize if first time
-                // Public create allowed for demo init
                 setDoc(doc(db, 'listings', mockListing.id), mockListing).catch(err => {
-                    if (err.message?.includes('insufficient permissions')) {
-                        console.warn("Initial sync waiting for auth or rules deploy...");
-                    } else {
-                        console.error("Init sync failed:", err);
-                    }
+                    handleFirestoreError(err, OperationType.WRITE, `listings/${mockListing.id}`);
                 });
             }
+        }, (error) => {
+            handleFirestoreError(error, OperationType.GET, `listings/${mockListing.id}`);
         });
 
         return () => {
@@ -195,7 +192,7 @@ const App: React.FC = () => {
         setListing(updatedListing);
         // Persist to real Firestore connection
         setDoc(doc(db, 'listings', updatedListing.id), updatedListing)
-            .catch(err => console.error("Firestore persistence failed:", err));
+            .catch(err => handleFirestoreError(err, OperationType.WRITE, `listings/${updatedListing.id}`));
     };
 
     const renderActiveStepComponent = () => {
