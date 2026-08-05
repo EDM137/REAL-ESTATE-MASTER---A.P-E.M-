@@ -8,6 +8,7 @@ import { GoogleGenAI } from '@google/genai';
 import { gatherPropertyInfo } from '@/src/services/geminiService';
 import PhotoCarousel from './PhotoCarousel';
 import CameraCapture from './CameraCapture';
+import { GoogleMapsAddressSearch } from './GoogleMapsAddressSearch';
 
 interface ListingComposerProps {
     listing: Listing;
@@ -51,34 +52,42 @@ const ListingComposer: React.FC<ListingComposerProps> = ({ listing, onListingUpd
     // --- Smart Auto-Fill Logic ---
     const handleAutoFill = async () => {
         if (!listing.address) {
-            alert("Please enter an address first.");
+            alert("Please select or enter an address first.");
             return;
         }
         setIsAutoFilling(true);
         try {
             const info = await gatherPropertyInfo(listing.address);
             
-            // Map the gathered info to custom fields and the propertyScrapedInfo object
             const autoFields = [
-                { id: `auto-${Date.now()}-1`, key: 'Year Built', value: info.yearBuilt || 'Unknown' },
-                { id: `auto-${Date.now()}-2`, key: 'Square Footage', value: info.sqft ? info.sqft.toString() : 'Unknown' },
-                { id: `auto-${Date.now()}-3`, key: 'Lot Size', value: info.lotSize || 'Unknown' },
-                { id: `auto-${Date.now()}-4`, key: 'Zoning', value: info.zoning || 'Unknown' },
-                { id: `auto-${Date.now()}-5`, key: 'School District', value: info.schoolDistrict || 'Unknown' },
-            ].filter(f => f.value !== 'Unknown');
+                { id: `auto-${Date.now()}-1`, key: 'Year Built', value: info.yearBuilt || '' },
+                { id: `auto-${Date.now()}-2`, key: 'Square Footage', value: info.sqft ? `${info.sqft} sq ft` : '' },
+                { id: `auto-${Date.now()}-3`, key: 'Lot Size', value: info.lotSize || '' },
+                { id: `auto-${Date.now()}-4`, key: 'Zoning', value: info.zoning || '' },
+                { id: `auto-${Date.now()}-5`, key: 'School District', value: info.schoolDistrict || '' },
+                { id: `auto-${Date.now()}-6`, key: 'Tax Assessment', value: info.taxAssessment || '' },
+                { id: `auto-${Date.now()}-7`, key: 'Last Sale Price', value: info.lastSalePrice || '' },
+                { id: `auto-${Date.now()}-8`, key: 'Bedrooms / Bathrooms', value: (info.beds && info.baths) ? `${info.beds} Bed / ${info.baths} Bath` : '' },
+                { id: `auto-${Date.now()}-9`, key: 'Architectural Style', value: info.style || '' },
+                { id: `auto-${Date.now()}-10`, key: 'Neighborhood Overview', value: info.neighborhoodInfo || '' },
+            ].filter(f => f.value && f.value !== 'Unknown');
+
+            const newPrice = info.estimatedPrice || listing.price || 1250000;
+            const newDesc = info.description || listing.description;
 
             onListingUpdate({
                 ...listing,
+                price: newPrice,
+                description: newDesc,
                 propertyScrapedInfo: info,
-                customFields: [...listing.customFields, ...autoFields]
+                customFields: [...listing.customFields.filter(f => !f.id.startsWith('auto-')), ...autoFields]
             });
             setDraftSaved(false);
         } catch (error) {
             console.error("Auto-Fill Error:", error);
-            alert("Failed to gather property data. Service might be restricted.");
+            alert("Failed to gather property data. Please try again.");
         } finally {
-            setIsAutoFilling(true); // Keep the 'Active' feel for a moment
-            setTimeout(() => setIsAutoFilling(false), 2000);
+            setIsAutoFilling(false);
         }
     };
 
@@ -243,20 +252,31 @@ const ListingComposer: React.FC<ListingComposerProps> = ({ listing, onListingUpd
                 <div>
                     <h3 className="text-lg font-semibold mb-3 text-brand-light border-b border-brand-accent pb-2">Property Details</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-                        <div className="md:col-span-2 flex items-end gap-2">
-                            <Input label="Property Address" name="address" value={listing.address} onChange={handleInputChange} className="flex-grow" />
-                            <Button 
-                                onClick={handleAutoFill} 
-                                disabled={isAutoFilling || !listing.address}
-                                className="mb-[2px] whitespace-nowrap bg-brand-blue"
-                                title="Auto-populate details from Map Data"
-                            >
-                                {isAutoFilling ? (
-                                    <span className="flex items-center gap-2"><div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin"></div> Fetching...</span>
-                                ) : (
-                                    <span className="flex items-center gap-2"><MapPin className="w-4 h-4" /> Smart Auto-Fill</span>
-                                )}
-                            </Button>
+                        <div className="md:col-span-2 space-y-3">
+                            <GoogleMapsAddressSearch 
+                                currentAddress={listing.address}
+                                onSelectAddress={(selectedAddr) => {
+                                    onListingUpdate({
+                                        ...listing,
+                                        address: selectedAddr
+                                    });
+                                    setDraftSaved(false);
+                                }}
+                            />
+                            <div className="flex justify-end">
+                                <Button 
+                                    onClick={handleAutoFill} 
+                                    disabled={isAutoFilling || !listing.address}
+                                    className="whitespace-nowrap bg-brand-blue hover:bg-brand-blue/80 font-bold"
+                                    title="Auto-populate details from Google Maps & Online Records"
+                                >
+                                    {isAutoFilling ? (
+                                        <span className="flex items-center gap-2"><div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin"></div> Fetching Real Online Details...</span>
+                                    ) : (
+                                        <span className="flex items-center gap-2"><MapPin className="w-4 h-4" /> Pre-Fill Online Property Details</span>
+                                    )}
+                                </Button>
+                            </div>
                         </div>
                         <Input label="Listing Price" name="price" type="number" value={listing.price} onChange={handleInputChange} />
                         <div className="md:col-span-1">

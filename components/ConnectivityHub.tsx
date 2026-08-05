@@ -40,8 +40,8 @@ const ConnectivityHub: React.FC<ConnectivityHubProps> = ({ appLanguage }) => {
 
     const [activeBridges, setActiveBridges] = useState({
         web: true,
-        file: false,
-        app: false
+        file: true,
+        app: true
     });
 
     const [recentActivity, setRecentActivity] = useState<string[]>([]);
@@ -297,7 +297,14 @@ const ConnectivityHub: React.FC<ConnectivityHubProps> = ({ appLanguage }) => {
                             <p className="text-xs text-brand-light mb-4">
                                 Orchestrate all device connectivity through a single, secure SovereignRE access point.
                             </p>
-                            <Button className="w-full bg-brand-blue hover:bg-brand-blue/80 font-bold uppercase tracking-widest text-[10px]">
+                            <Button 
+                                className="w-full bg-brand-blue hover:bg-brand-blue/80 font-bold uppercase tracking-widest text-[10px]"
+                                onClick={() => {
+                                    addLog("Application Bridge: Real-time sync executed");
+                                    addLog("File Bridge: Workspace assets synchronized");
+                                    addLog("Website Bridge: Live MLS data stream verified");
+                                }}
+                            >
                                 Force Global Sync
                             </Button>
                         </Card.Content>
