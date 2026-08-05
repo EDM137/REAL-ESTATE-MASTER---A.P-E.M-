@@ -3,10 +3,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Listing, RealEstateDocument, Signature } from '../types';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
-import { UploadCloud, FileSignature, Download, Trash2, FileText, CheckCircle, Plus, Shield, Send, User, Camera, Crop, EyeOff, Maximize, Lock, RefreshCw, X, Share2, Globe } from './ui/Icons';
+import { UploadCloud, FileSignature, Download, Trash2, FileText, CheckCircle, Plus, Shield, Send, User, Camera, Crop, EyeOff, Maximize, Lock, RefreshCw, X, Share2, Globe, Sparkles, Languages, MessageSquare, Database } from './ui/Icons';
 import { fileToDataUrl } from '../utils/file';
-
-import { GoogleGenAI } from '@google/genai';
+import { generateSmartDocument, translateDocumentContent } from '@/src/services/geminiService';
 
 interface DocumentVaultProps {
     listing: Listing;
@@ -365,13 +364,18 @@ const SignaturePad: React.FC<{ onSave: (data: string) => void; onCancel: () => v
 };
 
 const DocumentVault: React.FC<DocumentVaultProps> = ({ listing, onListingUpdate, appLanguage = 'English' }) => {
-    const [view, setView] = useState<'list' | 'editor' | 'create'>('list');
+    const [view, setView] = useState<'list' | 'editor' | 'create' | 'smart-gen'>('list');
     const [selectedDocId, setSelectedDocId] = useState<string | null>(null);
     const [isUploading, setIsUploading] = useState(false);
     const [isTranslating, setIsTranslating] = useState(false);
+    const [isGenerating, setIsGenerating] = useState(false);
     const [signingMode, setSigningMode] = useState(false);
     const [templateType, setTemplateType] = useState<string>('Purchase Agreement');
     
+    // Smart Gen State
+    const [smartSituation, setSmartSituation] = useState('');
+    const [smartDocType, setSmartDocType] = useState('Disclosure');
+
     // Scanner State
     const [isScanning, setIsScanning] = useState(false);
 
@@ -383,10 +387,27 @@ const DocumentVault: React.FC<DocumentVaultProps> = ({ listing, onListingUpdate,
     const [editorContent, setEditorContent] = useState('');
     const [editorTitle, setEditorTitle] = useState('');
     const [activeUser, setActiveUser] = useState<'Seller' | 'Buyer' | 'Realtor' | 'Inspector' | 'Contractor'>('Seller');
+    const [lastSaved, setLastSaved] = useState<string | null>(null);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const activeDoc = listing.documents.find(d => d.id === selectedDocId);
+
+    // Auto-save useEffect
+    useEffect(() => {
+        if (view === 'editor' && selectedDocId && !activeDoc?.certified) {
+            const timer = setTimeout(() => {
+                const updatedDocs = listing.documents.map(d => 
+                    d.id === selectedDocId 
+                    ? { ...d, content: editorContent, name: editorTitle } 
+                    : d
+                );
+                onListingUpdate({ ...listing, documents: updatedDocs });
+                setLastSaved(new Date().toLocaleTimeString());
+            }, 2000); // 2 second debounce for auto-save
+            return () => clearTimeout(timer);
+        }
+    }, [editorContent, editorTitle]);
 
     const handleCreateContract = () => {
         const templateContent = DOCUMENT_TEMPLATES[templateType] || DOCUMENT_TEMPLATES['Purchase Agreement'];
@@ -475,19 +496,8 @@ const DocumentVault: React.FC<DocumentVaultProps> = ({ listing, onListingUpdate,
         
         setIsTranslating(true);
         try {
-            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-            const prompt = `Translate the following real estate document into ${appLanguage}. 
-            Maintain the legal structure and professional tone. 
-            Document Content:
-            ${activeDoc.content}`;
-            
-            const result = await ai.models.generateContent({
-                model: 'gemini-3-flash-preview',
-                contents: prompt,
-            });
-            
-            const translatedContent = result.text || '';
-            const dualContent = `--- ENGLISH VERSION ---\n\n${activeDoc.content}\n\n\n--- ${appLanguage.toUpperCase()} VERSION ---\n\n${translatedContent}`;
+            const result = await translateDocumentContent(activeDoc.content, appLanguage);
+            const dualContent = `--- ENGLISH VERSION ---\n\n${activeDoc.content}\n\n\n--- ${appLanguage.toUpperCase()} VERSION ---\n\n${result}`;
             
             const updatedDocs = listing.documents.map(d => 
                 d.id === activeDoc.id 
@@ -502,6 +512,30 @@ const DocumentVault: React.FC<DocumentVaultProps> = ({ listing, onListingUpdate,
             alert("Failed to generate dual-language version.");
         } finally {
             setIsTranslating(false);
+        }
+    };
+
+    const handleSmartGenerate = async () => {
+        if (!smartSituation.trim()) return;
+        setIsGenerating(true);
+        try {
+            const partial = await generateSmartDocument(smartSituation, listing, smartDocType);
+            const newDoc: RealEstateDocument = {
+                ...partial as RealEstateDocument,
+                signatures: [],
+                certified: false
+            };
+            onListingUpdate({ ...listing, documents: [...listing.documents, newDoc] });
+            setSelectedDocId(newDoc.id);
+            setEditorContent(newDoc.content || '');
+            setEditorTitle(newDoc.name);
+            setView('editor');
+            setSmartSituation('');
+        } catch (error) {
+            console.error("Smart Gen error:", error);
+            alert("AI failed to generate document. Please try a simpler description.");
+        } finally {
+            setIsGenerating(false);
         }
     };
 
@@ -629,29 +663,94 @@ const DocumentVault: React.FC<DocumentVaultProps> = ({ listing, onListingUpdate,
         }
     };
 
-    if (view === 'create') {
+    if (view === 'create' || view === 'smart-gen') {
          return (
-             <Card className="animate-fade-in min-h-[300px]">
+             <Card className="animate-fade-in min-h-[400px]">
                  <Card.Header>
-                     <Card.Title>Select Document Type</Card.Title>
-                     <Card.Description>Choose a certified template to start.</Card.Description>
+                     <div className="flex justify-between items-center">
+                        <div>
+                            <Card.Title>{view === 'create' ? 'Select Document Type' : 'AI Smart Document Agent'}</Card.Title>
+                            <Card.Description>
+                                {view === 'create' ? 'Choose a certified template to start.' : 'Describe the situation and the AI will gather, draft, and autofill the proper forms.'}
+                            </Card.Description>
+                        </div>
+                        <div className="flex bg-brand-primary p-1 rounded-md border border-brand-accent">
+                            <button 
+                                onClick={() => setView('create')}
+                                className={`px-3 py-1 text-xs rounded transition-colors ${view === 'create' ? 'bg-brand-blue text-white shadow-sm' : 'text-brand-light hover:text-white'}`}
+                            >
+                                Templates
+                            </button>
+                            <button 
+                                onClick={() => setView('smart-gen')}
+                                className={`px-3 py-1 text-xs rounded transition-colors flex items-center gap-1 ${view === 'smart-gen' ? 'bg-brand-blue text-white shadow-sm' : 'text-brand-light hover:text-white'}`}
+                            >
+                                <Sparkles className="w-3 h-3" /> Smart Gen
+                            </button>
+                        </div>
+                     </div>
                  </Card.Header>
                  <Card.Content>
-                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[400px] overflow-y-auto">
-                         {Object.keys(DOCUMENT_TEMPLATES).map(type => (
-                             <button
-                                key={type}
-                                onClick={() => setTemplateType(type)}
-                                className={`p-4 rounded-lg border text-left transition-colors ${templateType === type ? 'border-brand-blue bg-brand-blue/10' : 'border-brand-accent hover:border-brand-light'}`}
-                             >
-                                 <div className="font-semibold text-brand-highlight">{type}</div>
-                             </button>
-                         ))}
-                     </div>
+                     {view === 'create' ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[400px] overflow-y-auto">
+                            {Object.keys(DOCUMENT_TEMPLATES).map(type => (
+                                <button
+                                    key={type}
+                                    onClick={() => setTemplateType(type)}
+                                    className={`p-4 rounded-lg border text-left transition-colors ${templateType === type ? 'border-brand-blue bg-brand-blue/10' : 'border-brand-accent hover:border-brand-light'}`}
+                                >
+                                    <div className="font-semibold text-brand-highlight">{type}</div>
+                                </button>
+                            ))}
+                        </div>
+                     ) : (
+                        <div className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-semibold text-brand-light">Expected Document Type</label>
+                                    <select 
+                                        className="w-full bg-brand-secondary border border-brand-accent rounded p-2 text-brand-highlight outline-none"
+                                        value={smartDocType}
+                                        onChange={(e) => setSmartDocType(e.target.value)}
+                                    >
+                                        <option value="Purchase Agreement">Purchase Agreement</option>
+                                        <option value="Disclosure">Disclosure Form</option>
+                                        <option value="Inspection Report">Inspection Report</option>
+                                        <option value="Lease">Lease/Rental Agreement</option>
+                                        <option value="Appraisal">Appraisal</option>
+                                        <option value="Comps">Comp Report</option>
+                                    </select>
+                                </div>
+                                <div className="flex items-center gap-2 p-3 bg-brand-blue/5 border border-brand-blue/20 rounded-lg text-xs text-brand-blue">
+                                    <Database className="w-5 h-5 flex-shrink-0" />
+                                    <span>AI will analyze the <strong>{listing.address}</strong> context, legal requirements, and situational data to generate a custom draft.</span>
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-sm font-semibold text-brand-light">Describe the Situation</label>
+                                <textarea 
+                                    className="w-full bg-brand-secondary border border-brand-accent rounded p-4 text-brand-highlight outline-none focus:border-brand-blue min-h-[150px]"
+                                    placeholder="e.g., The buyer wants to include a 10-day inspection contingency and the seller is disclosing a previous roof repair from 2022..."
+                                    value={smartSituation}
+                                    onChange={(e) => setSmartSituation(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                     )}
                  </Card.Content>
                  <Card.Footer className="flex justify-end gap-2">
                      <Button variant="outline" onClick={() => setView('list')}>Cancel</Button>
-                     <Button onClick={handleCreateContract}>Create Document</Button>
+                     {view === 'create' ? (
+                        <Button onClick={handleCreateContract}>Create Document</Button>
+                     ) : (
+                        <Button onClick={handleSmartGenerate} disabled={isGenerating || !smartSituation.trim()} className="bg-brand-blue">
+                             {isGenerating ? (
+                                <span className="flex items-center gap-2"><RefreshCw className="w-4 h-4 animate-spin" /> Drafting...</span>
+                             ) : (
+                                <span className="flex items-center gap-2"><Sparkles className="w-4 h-4" /> AI Generate & Auto-fill</span>
+                             )}
+                        </Button>
+                     )}
                  </Card.Footer>
              </Card>
          )
@@ -679,6 +778,11 @@ const DocumentVault: React.FC<DocumentVaultProps> = ({ listing, onListingUpdate,
                         {activeDoc.status === 'Pending Signature' && (
                              <span className="text-xs text-brand-blue animate-pulse">
                                 Pending: {activeDoc.requestedSigners?.join(', ')}
+                            </span>
+                        )}
+                        {lastSaved && !activeDoc.certified && (
+                            <span className="text-[10px] text-brand-green bg-brand-green/10 px-2 py-0.5 rounded flex items-center gap-1">
+                                <CheckCircle className="w-3 h-3" /> Auto-saved: {lastSaved}
                             </span>
                         )}
                     </div>

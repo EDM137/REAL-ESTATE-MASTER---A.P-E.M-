@@ -3,8 +3,9 @@ import { Listing, CustomField } from '../types';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
-import { Home, Camera, UploadCloud, Trash2, Plus, Sparkles, X, RefreshCw, MapPin, Database, Image as ImageIcon } from './ui/Icons';
+import { Home, Camera, UploadCloud, Trash2, Plus, Sparkles, X, RefreshCw, MapPin, Database, Image as ImageIcon, Search } from './ui/Icons';
 import { GoogleGenAI } from '@google/genai';
+import { gatherPropertyInfo } from '@/src/services/geminiService';
 import PhotoCarousel from './PhotoCarousel';
 import CameraCapture from './CameraCapture';
 
@@ -48,26 +49,37 @@ const ListingComposer: React.FC<ListingComposerProps> = ({ listing, onListingUpd
     };
 
     // --- Smart Auto-Fill Logic ---
-    const handleAutoFill = () => {
+    const handleAutoFill = async () => {
         if (!listing.address) {
             alert("Please enter an address first.");
             return;
         }
         setIsAutoFilling(true);
-        // Simulate API call to Maps/Property Data
-        setTimeout(() => {
+        try {
+            const info = await gatherPropertyInfo(listing.address);
+            
+            // Map the gathered info to custom fields and the propertyScrapedInfo object
+            const autoFields = [
+                { id: `auto-${Date.now()}-1`, key: 'Year Built', value: info.yearBuilt || 'Unknown' },
+                { id: `auto-${Date.now()}-2`, key: 'Square Footage', value: info.sqft ? info.sqft.toString() : 'Unknown' },
+                { id: `auto-${Date.now()}-3`, key: 'Lot Size', value: info.lotSize || 'Unknown' },
+                { id: `auto-${Date.now()}-4`, key: 'Zoning', value: info.zoning || 'Unknown' },
+                { id: `auto-${Date.now()}-5`, key: 'School District', value: info.schoolDistrict || 'Unknown' },
+            ].filter(f => f.value !== 'Unknown');
+
             onListingUpdate({
                 ...listing,
-                customFields: [
-                    ...listing.customFields,
-                    { id: `cf-auto-1`, key: 'Year Built', value: '1965' },
-                    { id: `cf-auto-2`, key: 'Sq Ft', value: '2,500' },
-                    { id: `cf-auto-3`, key: 'Lot Size', value: '0.25 Acres' }
-                ]
+                propertyScrapedInfo: info,
+                customFields: [...listing.customFields, ...autoFields]
             });
-            setIsAutoFilling(false);
             setDraftSaved(false);
-        }, 1500);
+        } catch (error) {
+            console.error("Auto-Fill Error:", error);
+            alert("Failed to gather property data. Service might be restricted.");
+        } finally {
+            setIsAutoFilling(true); // Keep the 'Active' feel for a moment
+            setTimeout(() => setIsAutoFilling(false), 2000);
+        }
     };
 
     // --- AI Enhance Logic ---

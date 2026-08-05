@@ -1,7 +1,7 @@
 
 /**
  * WATERMARK: Property of Eric Daniel Malley, Radest Publishing Co.
- * TIMESTAMP: 2026-04-19T08:44:08-07:00
+ * TIMESTAMP: 2026-04-19T09:03:10-07:00
  * IP PROTECTION ENABLED
  */
 
@@ -215,6 +215,7 @@ export interface Listing {
     maintenanceJobs?: MaintenanceJob[];
     propertyComplex?: PropertyComplex;
     transactions?: Transaction[];
+    propertyScrapedInfo?: Record<string, any>;
 }
 
 export interface ChatMessage {

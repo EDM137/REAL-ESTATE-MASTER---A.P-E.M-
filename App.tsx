@@ -1,7 +1,7 @@
 
 /**
  * WATERMARK: Property of Eric Daniel Malley, Radest Publishing Co.
- * TIMESTAMP: 2026-04-19T08:57:27-07:00
+ * TIMESTAMP: 2026-04-19T09:03:10-07:00
  * IP PROTECTION ENABLED
  */
 
@@ -30,7 +30,8 @@ import Translator from './components/Translator';
 import TranslatableText from './components/TranslatableText';
 import PropertyManagement from './components/PropertyManagement';
 import ConnectivityHub from './components/ConnectivityHub';
-import { Home, Shield, Sun, FileText, Wrench, Settings, User, Languages, Building, Network } from './components/ui/Icons';
+import { Button } from './components/ui/Button';
+import { Home, Shield, Sun, FileText, Wrench, Settings, User, Languages, Building, Network, Database } from './components/ui/Icons';
 import { db, auth } from './lib/firebase';
 import { onSnapshot, doc, setDoc } from 'firebase/firestore';
 import { onAuthStateChanged, signInAnonymously } from 'firebase/auth';
@@ -77,6 +78,20 @@ const mockListing: Listing = {
 const App: React.FC = () => {
     const [listing, setListing] = useState<Listing>(mockListing);
     const [activeStep, setActiveStep] = useState<RealEstateStatus>(RealEstateStatus.WELCOME);
+    const [navHistory, setNavHistory] = useState<RealEstateStatus[]>([]);
+
+    const navigateTo = (step: RealEstateStatus) => {
+        setNavHistory(prev => [...prev, activeStep]);
+        setActiveStep(step);
+    };
+
+    const goBack = () => {
+        if (navHistory.length > 0) {
+            const previous = navHistory[navHistory.length - 1];
+            setNavHistory(prev => prev.slice(0, -1));
+            setActiveStep(previous);
+        }
+    };
     const [appLanguage, setAppLanguage] = useState('English');
     const [showTerms, setShowTerms] = useState(false);
     const [showChat, setShowChat] = useState(false);
@@ -198,7 +213,7 @@ const App: React.FC = () => {
                             <div className="max-w-md mx-auto">
                                 <Translator 
                                     onLanguageSelect={(lang) => setAppLanguage(lang)} 
-                                    onComplete={() => setActiveStep(RealEstateStatus.LISTING)}
+                                    onComplete={() => navigateTo(RealEstateStatus.LISTING)}
                                     isOnboarding={true}
                                 />
                             </div>
@@ -302,8 +317,19 @@ const App: React.FC = () => {
             </header>
 
             <main className="grid grid-cols-12 gap-6 p-6 flex-grow">
-                <aside className="col-span-12 md:col-span-3 lg:col-span-2">
-                    <WorkflowStepper activeStep={activeStep} setActiveStep={setActiveStep} appLanguage={appLanguage} />
+                <aside className="col-span-12 md:col-span-3 lg:col-span-2 flex flex-col gap-4">
+                    {navHistory.length > 0 && (
+                        <Button 
+                            variant="outline" 
+                            size="sm" 
+                            onClick={goBack} 
+                            className="bg-brand-secondary border-brand-accent hover:border-brand-blue flex items-center gap-2"
+                        >
+                            <Shield className="w-4 h-4 rotate-180" />
+                            Back to {navHistory[navHistory.length - 1]}
+                        </Button>
+                    )}
+                    <WorkflowStepper activeStep={activeStep} setActiveStep={navigateTo} appLanguage={appLanguage} />
                 </aside>
                 <section className="col-span-12 md:col-span-9 lg:col-span-7">
                     {renderActiveStepComponent()}
